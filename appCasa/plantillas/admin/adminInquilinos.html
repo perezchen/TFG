@@ -1,0 +1,43 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/adminInquilinos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Administrar Casas</h1>
+    <a href="{% url 'create_object' 'inquilino' %}" class="btn btn-primary mb-3">Añadir Inquilino</a>
+    <table class="table table-bordered">
+        <thead style="color: white;">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Universidad</th>
+                <th>Dirección</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody style="color: white;">
+            {% for inquilino in inquilinos %}
+            <tr>
+                <td>{{ inquilino.id }}</td>
+                <td>{{ inquilino.user.username }}</td>
+                <td>{{ inquilino.university }}</td>
+                <td>{{ inquilino.address }}</td>
+                <td>
+                    <a href="{% url 'update_object' inquilino.id 'inquilino' %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'delete_object' inquilino.id 'inquilino' %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'admin_panel' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/adminReservas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Administrar Reservas</h1>
+    <a href="{% url 'create_object' 'reserva' %}" class="btn btn-primary mb-3">Crear reserva</a>
+    <table class="table table-bordered">
+        <thead style="color: white;">
+            <tr>
+                <th>ID</th>
+                <th>Casa</th>
+                <th>Inquilino</th>
+                <th>F_entrada</th>
+                <th>F_salida</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody style="color: white;">
+            {% for reserva in reservas %}
+            <tr>
+                <td>{{ reserva.id }}</td>
+                <td>{{ reserva.casa.nombre }}</td>
+                <td>{{ reserva.inquilino.user.username }}</td>
+                <td>{{ reserva.fecha_entrada }}</td>
+                <td>{{ reserva.fecha_salida }}</td>
+                <td>
+                    <a href="{% url 'update_object' reserva.id 'reserva' %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'delete_object' reserva.id 'casa' %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'admin_panel' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+{% endblock %}

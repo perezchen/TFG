@@ -1,0 +1,108 @@
+
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+      <div class="img_index">
+        <div class="content">
+          <h1>Bienvenido a Casa Rio</h1>
+          <p class="texto-transparente">
+            Disfruta de Casa Rio o de cualquiera de las otras espectaculares casas de la Axarquia.
+          </p>
+          <a class="btn btn-info" href="{% url 'casas_panel' %}"> Ver nuestras casas </a>
+        </div>
+      </div>
+
+      <div class="container mt-5">
+        <h1 style="text-align: center; margin-bottom: 30px">Privilegios</h1>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <img
+                src="../static/appCasa/images/house.avif"
+                class="card-img-top"
+                alt="Imagen 1" />
+              <div class="card-body">
+                <p class="card-text">
+                  Estar en contacto con la naturaleza.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <img
+                src="../static/appCasa/images/mountain.webp"
+                class="card-img-top"
+                alt="Imagen 2" />
+              <div class="card-body">
+                <p class="card-text">
+                  Estar en contacto con la naturaleza.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <img
+                src="../static/appCasa/images/jardin.webp"
+                class="card-img-top"
+                alt="Imagen 3" />
+              <div class="card-body">
+                <p class="card-text">
+                  Estar en contacto con la naturaleza.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="separator">
+
+      </div>
+
+  <div class="phater-box-icons">
+    <div>
+      <h1>Características Principales</h1>
+    </div>
+    <div class="container-icons">
+        <div class="content-icon">
+          <i class="fa-solid fa-water-ladder fa-2x"></i>
+          <p>Piscina</p>
+        </div>
+        <div class="content-icon">
+          <i class="fa-solid fa-heart fa-2x"></i>
+          <p>Zona romántica</p>
+        </div>
+        <div class="content-icon">
+          <i class="fa-solid fa-couch fa-2x"></i>
+          <p>Zona relax</p>
+        </div>
+
+        <div class="content-icon">
+          <i class="fa-solid fa-cloud-sun fa-2x"></i>
+          <p>Jardin</p>
+        </div>
+        <div class="content-icon">
+          <i class="fa-solid fa-person-hiking fa-2x"></i>
+          <p>Zona senderismo</p>
+        </div>
+        <div class="content-icon">
+          <i class="fa-solid fa-horse fa-2x"></i>
+          <p>Zona animales</p>
+        </div>
+  </div>
+</div>
+    </main>
+    
+    {% endblock %}

@@ -1,0 +1,93 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/adminPanel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Admin Panel</h1>
+    <div class="dropdown mt-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button"
+            id="dropdownMenuButton" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Administrar
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item"
+                    href="{% url 'admin_casas' %}">Casas</a></li>
+            <li><a class="dropdown-item"
+                    href="{% url 'admin_inquilinos' %}">Inquilinos</a></li>
+            <li><a class="dropdown-item"
+                    href="{% url 'admin_restaurantes' %}">Restaurantes</a></li>
+            <li><a class="dropdown-item"
+                    href="{% url 'admin_reservas' %}">Reservas</a></li>
+            <li><a class="dropdown-item"
+                    href="{% url 'admin_reservas_restaurantes' %}">Reservas
+                    restaurantes</a></li>
+            <!-- Add more items for inquilinos, reservas, etc. -->
+        </ul>
+    </div>
+
+    <div class="card text-center">
+        <div class="card-header">
+            Casas
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Panel administracion de las casas</h5>
+            <p class="card-text">Aqui podra crear, editar y eliminar casas</p>
+            <a href="{% url 'admin_casas' %}" class="btn btn-primary">Administrar</a>
+        </div>
+    </div>
+
+    <div class="card text-center">
+        <div class="card-header">
+            Inquilinos
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Panel administracion de las inquilinos</h5>
+            <p class="card-text">Aqui podra crear, editar y eliminar inquilinos</p>
+            <a href="{% url 'admin_inquilinos' %}" class="btn btn-primary">Administrar</a>
+        </div>
+    </div>
+
+    <div class="card text-center">
+        <div class="card-header">
+            Restaurantes
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Panel administracion de los restaurantes</h5>
+            <p class="card-text">Aqui podra crear, editar y eliminar restaurantes</p>
+            <a href="{% url 'admin_restaurantes' %}" class="btn btn-primary">Administrar</a>
+        </div>
+    </div>
+
+    <div class="card text-center">
+        <div class="card-header">
+            Reservas
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Panel administracion de los reservas</h5>
+            <p class="card-text">Aqui podra crear, editar y eliminar reservas</p>
+            <a href="{% url 'admin_reservas' %}" class="btn btn-primary">Administrar</a>
+        </div>
+    </div>
+
+    <div class="card text-center">
+        <div class="card-header">
+            Reservas Restaurantes
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Panel administracion de los reservas restaurantes</h5>
+            <p class="card-text">Aqui podra crear, editar y eliminar reservas  restaurantes</p>
+            <a href="{{% url 'admin_reservas_restaurantes' %}" class="btn btn-primary">Administrar</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

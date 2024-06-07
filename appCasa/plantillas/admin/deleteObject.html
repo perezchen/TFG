@@ -1,0 +1,49 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/deleteObject.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if tipo_objeto == 'casa'%}
+    <div class="container mt-5">
+        <h1>Eliminar Casa</h1>
+        <p>¿Estás seguro de que quieres eliminar la casa {{ object.nombre }}?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <a href="{% url 'admin_casas' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+
+{% elif tipo_objeto == 'inquilino'%}
+<div class="container mt-5">
+    <h1>Eliminar Inquilino</h1>
+    <p>¿Estás seguro de que quieres eliminar el inquilino {{ object.user.username }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'admin_inquilinos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+{% elif tipo_objeto == 'restaurante'%}
+<div class="container mt-5">
+    <h1>Eliminar </h1>
+    <p>¿Estás seguro de que quieres eliminar el restaurante {{ object.nombre }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'admin_restaurantes' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+{% endif %}
+
+{% endblock %}

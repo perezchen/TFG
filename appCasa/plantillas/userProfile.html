@@ -1,0 +1,54 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Bar los Canillas{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/userProfile.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <h5 class="card-header">Perfil del Usuario</h5>
+        <div class="card-body">
+            <p class="card-text"><strong>Username:</strong> {{ inquilino.user.username }}</p>
+            <p class="card-text"><strong>Email:</strong> {{ inquilino.user.email }}</p>
+            <p class="card-text"><strong>DNI:</strong> {{ inquilino.dni }}</p>
+            <p class="card-text"><strong>Dirección:</strong> {{ inquilino.address }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="card">
+        <h5 class="card-header">Reservas casas</h5>
+        <div class="card-body">
+            {% for reserva in reservas_casas %}
+            <p>Reserva en {{ reserva.casa.nombre }} desde {{ reserva.fecha_entrada }} hasta {{ reserva.fecha_salida }}</p>
+            {% empty %}
+            <p>No tienes reservas de casas.</p>
+            {% endfor %}
+        
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-5">
+    <div class="card">
+        <h5 class="card-header">Reservas restaurantes</h5>
+        <div class="card-body">
+            {% for reserva in reservas_restaurantes %}
+            <p>Reserva en {{ reserva.restaurante.nombre }} para el {{ reserva.fecha_reserva }} a las {{ reserva.hora_reserva }}</p>
+            {% empty %}
+            <p>No tienes reservas en restaurantes.</p>
+            {% endfor %}
+        
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+body{
+    background-color: #2B332C !important; /* asegura que se aplique el color */
+    color: whitesmoke !important;
+}
+
+form div {
+    padding: 15px;
+}
+
+.div-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

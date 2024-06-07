@@ -1,0 +1,119 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Update Casa{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/updateObject.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if tipo_objeto == 'casa' %}
+<div class="container">
+    <h1>Editar Casa</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo_objeto" value="casa">
+
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre"
+                value="{{ object.nombre }}">
+        </div>
+        <div class="mb-3">
+            <label for="licencia" class="form-label">Licencia</label>
+            <input type="text" class="form-control" id="licencia" name="licencia" value="{{ object.licencia }}">
+        </div>
+        <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion"
+                name="direccion" value="{{ object.direccion }}">
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion"
+                name="descripcion">{{ object.descripcion }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="num_habitaciones" class="form-label">Número de
+                Habitaciones</label>
+            <input type="number" class="form-control" id="num_habitaciones"
+                name="num_habitaciones"
+                value="{{ object.numero_habitaciones }}">
+        </div>
+        <div class="mb-3">
+            <label for="max_inquilinos" class="form-label">Máximo de
+                Inquilinos</label>
+            <input type="number" class="form-control" id="max_inquilinos"
+                name="max_inquilinos" value="{{ object.max_inquilinos }}">
+        </div>
+        <div class="mb-3">
+            <label for="precio_noche" class="form-label">Precio por
+                Noche</label>
+            <input type="text" class="form-control" id="precio_noche"
+                name="precio_noche" value="{{ object.precio_por_noche }}">
+        </div>
+        <div class="mb-3">
+            <label for="img_url" class="form-label">URL Imagen</label>
+            <input type="text" class="form-control" id="img_url" name="img_url" value="{{ object.img_url }}">
+        </div>
+        <div class="mb-3">
+            <label for="url_name" class="form-label">Nombre URL</label>
+            <input type="text" class="form-control" id="url_name" name="url_name" value="{{ object.url_name }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+    <a href="{% url 'admin_casas' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+{% elif tipo_objeto == 'inquilino' %}
+<div class="container">
+    <h1>Editar Inquilino</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo_objeto" value="casa">
+
+        <!-- Campos para la creación del usuario -->
+        <div class="mb-3">
+            <label for="username" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="username"
+                name="username" value="{{ object.user.username }}" > 
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo</label>
+            <input type="email" class="form-control" id="email" name="email"
+            value="{{ object.user.email }}">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password"
+                name="password" placeholder="Cambia contrasena">
+        </div>
+
+        <!-- Campos específicos del Inquilino -->
+        <div class="mb-3">
+            <label for="university" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni"
+                name="dni" value="{{ object.dni }}">
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="address" name="address"
+            value="{{ object.address }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+    <a href="{% url 'admin_inquilinos' %}"
+        class="btn btn-secondary mt-3">Volver</a>
+</div>
+
+{% elif tipo_objeto == 'restaurante' %}
+
+
+{% endif %}
+
+{% endblock %}

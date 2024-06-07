@@ -1,0 +1,174 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+
+<link rel="stylesheet" href="{% static 'appCasa/css/casas/casaLuisa.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="calendar-container">
+      <div class="title-description" >
+        <h1>{{ casa.nombre }}</h1>
+        <p> {{ casa.descripcion }}</p>
+      </div>
+      
+
+      <div id="carousel-casa" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="../../static/appCasa/images/house.avif" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="../../static/appCasa/images/mountain.webp" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="../../static/appCasa/images/piscina.webp" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-casa" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel-casa" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+
+      <div class="title-reserve">
+        <h2>Bienvenido a nuestro calendario de reservas</h2>
+        <p>
+          Por favor, seleccione los días que le gustaría visitar nuestra
+          estancia:
+        </p>
+      </div>
+
+
+      <form class="form_reserve" action="{% url 'reserve' casa.id %}" method="post">
+        {% csrf_token %}
+        <div class="inputs-dates">
+          <div>
+            <label for="fecha_entrada">Fecha de entrada:</label>
+            <input placeholder="Selecciona una fecha" type="text" id="fecha_entrada" name="fecha_entrada" required>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label for="fecha_salida">Fecha de salida:</label>
+            <input placeholder="Selecciona una fecha" type="text" id="fecha_salida" name="fecha_salida" required>
+          </div>
+        </div>
+
+        <label style="color: white;" for="customRange3" class="form-label">Nº inquilinos</label>
+        <input style="color: wheat;" type="range" class="form-range" min="0" max="8" step="1" id="customRange3" required>
+        <span style="color: white;" id="rangeValue"></span>
+        <!-- campo oculto para poder mandar al backen el rango -->
+        <input type="hidden" id="rangeValueInput" name="rangeValue">
+
+        <div class="btn_reserve">
+          <button id="btn-reserve" type="submit" class="btn btn-info">
+            <i style="padding: 5px" class="bi bi-journal-bookmark-fill"></i
+            >Reservar
+          </button>
+        </div>
+      </form>
+    </div>
+
+      <script>
+        $(document).ready(function() {
+          let reservedRanges = [];
+          var idCasa = '{{ casa.id }}';
+      
+          // Función para deshabilitar fechas
+          function disableDates(date) {
+            date.setHours(0, 0, 0, 0);  // Establece la hora, minuto, segundo y milisegundo a 0
+            for (let range of reservedRanges) {
+              let startDate = new Date(range.start);
+              let endDate = new Date(range.end);
+              startDate.setHours(0, 0, 0, 0); // Asegúrate de que la comparación de fechas sea justa
+              endDate.setHours(23, 59, 59, 999);  // Extiende el rango al final del día
+              if (date >= startDate && date <= endDate) {
+                return [false, "reserved"]; // Días deshabilitados y marcados
+              }
+            }
+            return [true];
+          }
+      
+          // Función para obtener reservas desde la API
+          function fetchReservations() {
+            $.ajax({
+              url: "/api_reservas/" + idCasa + '/', // Coloca la URL correcta según tu configuración de rutas
+              method: 'GET',
+              success: function(data) {
+                reservedRanges = data; // Guarda las fechas de reserva
+                $("#fecha_entrada, #fecha_salida").datepicker('refresh'); // Actualiza el datepicker
+              },
+              error: function(error) {
+                console.error("Error al obtener las reservas:", error);
+              }
+            });
+          }
+      
+          // Configuración inicial de DatePicker
+          $("#fecha_entrada, #fecha_salida").datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: 0, // No permitir seleccionar fechas anteriores a hoy
+            beforeShowDay: disableDates,
+            onSelect: function(selectedDate) {
+              if (this.id == 'fecha_entrada') {
+                var minDate = $(this).datepicker('getDate');
+                $('#fecha_salida').datepicker('option', 'minDate', minDate);
+                
+                // Establecer fecha máxima para 'exitDate' de acuerdo a la próxima reserva
+                let maxDate = null;
+                for (let range of reservedRanges) {
+                  if (new Date(range.start) > minDate) {
+                    maxDate = new Date(range.start);
+                    maxDate.setDate(maxDate.getDate()); // Un día antes del inicio de la próxima reserva
+                    break;
+                  }
+                }
+                $('#fecha_salida').datepicker('option', 'maxDate', maxDate);
+                $('#fecha_salida').datepicker('setDate', minDate);
+              }
+            }
+          });
+      
+          fetchReservations(); // Llama a la función para obtener las fechas reservadas al cargar la página
+        });
+      </script>
+
+    
+    <script>
+      const rangeInput = document.getElementById('customRange3');
+      const rangeValueDisplay = document.getElementById('rangeValue');
+      const rangeValueInput = document.getElementById('rangeValueInput');
+    
+      rangeInput.addEventListener('input', function() {
+          rangeValueDisplay.textContent = rangeInput.value;
+          rangeValueInput.value = rangeInput.value;
+      });
+    </script>
+
+    <script>
+      window.onpageshow = function(event) {
+          if (event.persisted) {
+              window.location.reload();
+          }
+      };
+      </script>
+
+
+{% endblock %}

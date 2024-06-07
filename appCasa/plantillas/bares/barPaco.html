@@ -1,0 +1,130 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+
+<link rel="stylesheet" href="{% static 'appCasa/css/bares/barPaco.css' %}">
+<script
+  src="https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var restauranteLicencia = '{{ restaurante.numero_licencia }}'; // Asegúrate de que esta línea es correcta dentro de tu sistema de plantillas
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: '/api_restaurante/' + restauranteLicencia + '/', // URL que devuelve los datos de las reservas
+        eventColor: '#ff9f89', // Color predeterminado para todos los eventos
+  
+        eventDidMount: function(info) {
+          // Cambia el color de fondo del evento
+          info.el.style.backgroundColor = '#007bff'; // Azul
+          info.el.style.color = '#ffffff'; // Texto blanco para mejor visibilidad
+        },
+  
+        selectable: true, // Permite la selección de fechas individuales
+        selectAllow: function(selectInfo) {
+          const start = new Date(selectInfo.startStr);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Elimina la hora para comparar solo fechas
+          // Verifica que la fecha seleccionada sea futuro y no coincida con eventos existentes
+          return (
+            start >= today &&
+            !calendar.getEvents().some(event => {
+              return new Date(event.start).toDateString() === start.toDateString();
+            })
+          );
+        },
+  
+        select: function(info) {
+          const entrada = document.getElementById('fecha_reserva');
+  
+          // Elimina cualquier evento de fondo que haya sido previamente seleccionado
+          calendar.getEvents().forEach(function(event) {
+            if (event.display === 'background') {
+              event.remove();
+            }
+          });
+  
+          // Establece la fecha de entrada
+          entrada.value = info.startStr;
+  
+          // Añade un evento de fondo para visualizar la selección
+          calendar.addEvent({
+            start: info.startStr,
+            end: info.startStr,
+            display: 'background',
+            backgroundColor: '#ffcccc',
+          });
+        },
+  
+        longPressDelay: 1, // Mantiene la configuración de retardo para pulsación larga
+      });
+  
+      calendar.render();
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="calendar-container">
+  <div class="title-reserve">
+    <h1>{{ restaurante.nombre }}</h1>
+    <h2>Bienvenido a nuestro calendario de reservas de bar Paco</h2>
+    <p>
+      Por favor, seleccione los días que le gustaría visitar nuestra
+      estancia:
+    </p>
+  </div>
+
+  <div id="calendar"></div>
+
+<form class="form_reserve" action="{% url 'reserva_restaurante' restaurante.numero_licencia %}" method="post">
+  {% csrf_token %}
+  <div class="inputs-dates">
+    <div>
+      <label for="fecha_reserva">Fecha de la Reserva:</label>
+      <input type="date" id="fecha_reserva" name="fecha_reserva" />
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label for="hora_reserva">Elige una hora para tu reserva:</label>
+      <input type="time" id="hora_reserva" name="hora_reserva"
+             min="09:00" max="23:00" required>
+    </div>
+  </div>
+
+  <label style="color: white;" for="customRange3" class "form-label">Nº comensales</label>
+  <input style="color: wheat;" type="range" class="form-range" min="0" max="8" step="1" id="customRange3">
+  <span style="color: white;" id="rangeValue"></span>
+  <!-- campo oculto para poder mandar al backen el rango -->
+  <input type="hidden" id="rangeValueInput" name="rangeValue">
+
+  <div class="btn_reserve">
+    <button id="btn-reserve" type="submit" class="btn btn-info">
+      <i style="padding: 5px" class="bi bi-journal-bookmark-fill"></i
+      >Reservar
+    </button>
+  </div>
+</form>
+</div>
+</div>
+
+
+<script>
+  const rangeInput = document.getElementById('customRange3');
+  const rangeValueDisplay = document.getElementById('rangeValue');
+  const rangeValueInput = document.getElementById('rangeValueInput');
+
+  rangeInput.addEventListener('input', function() {
+      rangeValueDisplay.textContent = rangeInput.value;
+      rangeValueInput.value = rangeInput.value;
+  });
+</script>
+
+{% endblock %}

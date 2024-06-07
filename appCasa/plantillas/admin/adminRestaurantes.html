@@ -1,0 +1,41 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/adminRestaurantes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Administrar Restaurante</h1>
+    <a href="{% url 'create_object' 'restaurante' %}" class="btn btn-primary mb-3">Añadir Restaurante</a>
+    <table class="table table-bordered">
+        <thead style="color: white;">
+            <tr>
+                <th>Num_licencia</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody style="color: white;">
+            {% for restaurante in restaurantes %}
+            <tr>
+                <td>{{ restaurante.numero_licencia }}</td>
+                <td>{{ restaurante.nombre }}</td>
+                <td>{{ restaurante.direccion }}</td>
+                <td>
+                    <a href="{% url 'update_object' restaurante.id 'restaurante' %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'delete_object' restaurante.id 'restaurante' %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'admin_panel' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+{% endblock %}
