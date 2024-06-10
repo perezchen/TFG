@@ -51,10 +51,9 @@
                 name="max_inquilinos" value="{{ object.max_inquilinos }}">
         </div>
         <div class="mb-3">
-            <label for="precio_noche" class="form-label">Precio por
-                Noche</label>
-            <input type="text" class="form-control" id="precio_noche"
-                name="precio_noche" value="{{ object.precio_por_noche }}">
+            <label for="precio_noche_persona" class="form-label">Precio por noche/persona</label>
+            <input type="text" class="form-control" id="precio_noche_persona"
+                name="precio_noche_persona" value="{{ object.precio_noche_persona }}">
         </div>
         <div class="mb-3">
             <label for="img_url" class="form-label">URL Imagen</label>
@@ -64,17 +63,24 @@
             <label for="url_name" class="form-label">Nombre URL</label>
             <input type="text" class="form-control" id="url_name" name="url_name" value="{{ object.url_name }}">
         </div>
+        <div class="mb-3">
+            <label for="dias_cancel" class="form-label">Dias para cancelacion</label>
+            <input type="text" class="form-control" id="dias_cancel" name="dias_cancel" value="{{ object.dias_cancel }}">
+        </div>
 
         <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
     <a href="{% url 'admin_casas' %}" class="btn btn-secondary mt-3">Volver</a>
 </div>
+
+
+
 {% elif tipo_objeto == 'inquilino' %}
 <div class="container">
     <h1>Editar Inquilino</h1>
     <form method="post">
         {% csrf_token %}
-        <input type="hidden" name="tipo_objeto" value="casa">
+        <input type="hidden" name="tipo_objeto" value="inquilino">
 
         <!-- Campos para la creación del usuario -->
         <div class="mb-3">
@@ -111,8 +117,112 @@
         class="btn btn-secondary mt-3">Volver</a>
 </div>
 
-{% elif tipo_objeto == 'restaurante' %}
 
+
+{% elif tipo_objeto == 'restaurante' %}
+<div class="container">
+    <h1>Editar Restaurante</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo_objeto" value="restaurante">
+
+        <!-- Campo para el nombre del restaurante -->
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ object.nombre }}" required>
+        </div>
+        
+        <!-- Campo para el número de licencia -->
+        <div class="mb-3">
+            <label for="num_licencia" class="form-label">Número de Licencia</label>
+            <input type="text" class="form-control" id="num_licencia" name="num_licencia" value="{{ object.numero_licencia }}" required>
+        </div>
+    
+        <!-- Campo para la dirección del restaurante -->
+        <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ object.direccion }}" required>
+        </div>
+    
+        <!-- Campo para la descripción del restaurante -->
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion">{{ object.descripcion }}</textarea>
+        </div>
+    
+        <!-- Campo para el precio medio -->
+        <div class="mb-3">
+            <label for="precio_medio" class="form-label">Precio Medio</label>
+            <input type="text" class="form-control" id="precio_medio" name="precio_medio" value="{{ object.precio_medio }}" required>
+        </div>
+
+        <!-- Campo para la URL de la imagen -->
+        <div class="mb-3">
+            <label for="img_url" class="form-label">URL de la Imagen</label>
+            <input type="text" class="form-control" id="img_url" name="img_url" value="{{ object.img_url }}">
+        </div>
+
+        <!-- Campo para el nombre de la URL -->
+        <div class="mb-3">
+            <label for="url_name" class="form-label">Nombre de la URL</label>
+            <input type="text" class="form-control" id="url_name" name="url_name" value="{{ object.url_name }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+    <a href="{% url 'admin_restaurantes' %}" class="btn btn-secondary mt-3">Volver</a>
+</div>
+
+
+
+{% elif tipo_objeto == 'reserva' %}
+<div class="container">
+    <h1>Editar Reserva</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo_objeto" value="reserva">
+
+        <!-- Campos para las fechas de la reserva -->
+        <div class="mb-3">
+            <label for="fecha_entrada" class="form-label">Fecha de Entrada</label>
+            <input type="date" class="form-control" id="fecha_entrada"
+                name="fecha_entrada" value="{{ object.fecha_entrada|date:"Y-m-d" }}">
+        </div>
+        <div class="mb-3">
+            <label for="fecha_salida" class="form-label">Fecha de Salida</label>
+            <input type="date" class="form-control" id="fecha_salida" name="fecha_salida"
+            value="{{ object.fecha_salida|date:"Y-m-d" }}">
+        </div>
+
+        <!-- Campos para detalles sobre los inquilinos -->
+        <div class="mb-3">
+            <label for="num_inquilinos" class="form-label">Número de Inquilinos</label>
+            <input type="number" class="form-control" id="num_inquilinos"
+                name="num_inquilinos" value="{{ object.num_inquilinos }}">
+        </div>
+        <div class="mb-3">
+            <label for="num_menores" class="form-label">Número de Menores de 15 años</label>
+            <input type="number" class="form-control" id="num_menores" name="num_menores"
+            value="{{ object.num_menores }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="precio_total" class="form-label">Precio Total</label>
+            <input type="text" class="form-control" id="precio_total" name="precio_total"
+            value="{{ object.precio_total }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="cancelada" class="form-label">¿Está Cancelada?</label>
+            <select class="form-control" id="cancelada" name="cancelada">
+                <option value="False" {% if not object.cancelada %}selected{% endif %}>No</option>
+                <option value="True" {% if object.cancelada %}selected{% endif %}>Sí</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
 
 {% endif %}
 

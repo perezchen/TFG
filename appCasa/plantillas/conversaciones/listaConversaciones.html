@@ -1,0 +1,34 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Payment{% endblock %}
+
+{% block extra_links %}
+
+<link rel="stylesheet" href="{% static 'appCasa/css/conversaciones/listaConversaciones.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<h2>Mis Conversaciones</h2>
+<table style="color: whitesmoke;" class="table">
+    <thead>
+        <tr>
+            <th>Asunto</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for conversacion in conversaciones %}
+        <tr>
+            <td>{{ conversacion.asunto }}</td>
+            <td>
+                <a href="{% url 'ver_conversacion' conversacion.id %}" class="btn btn-primary">Mensajes</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

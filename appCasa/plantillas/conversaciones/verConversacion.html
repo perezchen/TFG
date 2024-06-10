@@ -1,0 +1,26 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Payment{% endblock %}
+
+{% block extra_links %}
+
+<link rel="stylesheet" href="{% static 'appCasa/css/conversaciones/verConversacion.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-white">Mensajes</h1>
+    <div class="chat-window">
+        {% for mensaje in mensajes %}
+        <div class="{% if mensaje.autor == request.user %}message-right{% else %}message-left{% endif %}">
+            <p><strong>{{ mensaje.autor.username }}</strong>: {{ mensaje.texto }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'enviar_mensaje' conversacion_id %}" class="btn btn-primary mt-3">Enviar Mensaje</a>
+</div>
+{% endblock %}

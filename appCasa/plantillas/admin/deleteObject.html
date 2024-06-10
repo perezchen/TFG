@@ -22,6 +22,8 @@
         </form>
     </div>
 
+
+
 {% elif tipo_objeto == 'inquilino'%}
 <div class="container mt-5">
     <h1>Eliminar Inquilino</h1>
@@ -33,6 +35,8 @@
     </form>
 </div>
 
+
+
 {% elif tipo_objeto == 'restaurante'%}
 <div class="container mt-5">
     <h1>Eliminar </h1>
@@ -41,6 +45,19 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Eliminar</button>
         <a href="{% url 'admin_restaurantes' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+
+
+{% elif tipo_objeto == 'reserva'%}
+<div class="container mt-5">
+    <h1>Eliminar </h1>
+    <p>¿Estás seguro de que quieres eliminar la reserva {{ object.id }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'admin_reservas' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 

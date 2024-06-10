@@ -29,9 +29,10 @@ class Casa(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     numero_habitaciones = models.IntegerField()
     max_inquilinos = models.IntegerField()
-    precio_por_noche = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_noche_persona = models.DecimalField(max_digits=12, decimal_places=2, default=50.00)
     img_url = models.CharField(max_length=255, default="house.avif")
     url_name = models.CharField(max_length=255, default="casas_panel")
+    dias_cancel = models.IntegerField(default=31)
 
 class Reserva(models.Model):
     casa = models.ForeignKey(Casa, on_delete=models.CASCADE)
@@ -39,7 +40,9 @@ class Reserva(models.Model):
     fecha_entrada = models.DateField()
     fecha_salida = models.DateField()
     num_inquilinos = models.IntegerField(default=1)
+    num_menores = models.IntegerField(default=0)
     precio_total = models.DecimalField(max_digits=12, decimal_places=2)
+    cancelada = models.BooleanField(default=False)
     
 class Restaurante(models.Model):
     numero_licencia = models.CharField(max_length=255, unique=True)
@@ -62,6 +65,34 @@ class Reserva_restaurante(models.Model):
 
     def __str__(self):
         return f'Reserva para {self.inquilino} el {self.fecha_reserva} a las {self.hora_reserva}'
+    
+    
+class Conversacion(models.Model):
+    participantes = models.ManyToManyField(User, related_name='conversaciones')
+    asunto = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.asunto
+    
+    
+class Mensaje(models.Model):
+    conversacion = models.ForeignKey(Conversacion, related_name='mensajes', on_delete=models.CASCADE)
+    autor = models.ForeignKey(User, related_name='mensajes_enviados', on_delete=models.CASCADE)
+    texto = models.TextField()
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.autor.username}: {self.texto[:50]}..."  # Muestra una vista previa del mensaje
+    
+    
+    
+    
+
+
+
+
+
+
 
 
 class Contrato(models.Model):
@@ -77,11 +108,6 @@ class Pago(models.Model):
     metodo_pago = models.CharField(max_length=255)
 
 
-class Mensaje(models.Model):
-    inquilino = models.ForeignKey(Inquilino, on_delete=models.CASCADE)
-    id_admin = models.IntegerField(null=True, blank=True)
-    texto = models.TextField()
-    fecha_hora = models.DateTimeField()
 
 class Evaluacion(models.Model):
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)

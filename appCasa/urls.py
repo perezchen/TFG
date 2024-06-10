@@ -35,11 +35,19 @@ urlpatterns = [
     path('admin_panel/restaurantes/', views.admin_restaurantes_view, name='admin_restaurantes'),
     path('admin_panel/reservas/', views.admin_reservas_view, name='admin_reservas'),
     path('admin_panel/reservasRestaurantes/', views.admin_reservas_restaurantes_view, name='admin_reservas_restaurantes'),
-    path('admin_panel/casas/create/<str:tipo_objeto>', views.create_object_view, name='create_object'),
-    path('admin_panel/casas/update/<int:object_id>/<str:tipo_objeto>', views.update_object_view, name='update_object'),
-    path('admin_panel/casas/delete/<int:object_id>/<str:tipo_objeto>', views.delete_object_view, name='delete_object'),
+    path('admin_panel/create/<str:tipo_objeto>', views.create_object_view, name='create_object'),
+    path('admin_panel/update/<int:object_id>/<str:tipo_objeto>', views.update_object_view, name='update_object'),
+    path('admin_panel/delete/<int:object_id>/<str:tipo_objeto>', views.delete_object_view, name='delete_object'),
     
     # vista perfil usuario
     path('user_profile/', views.user_profile_view, name='user_profile'),
+    
+    
+    # vista conversaciones
+    path('lista_conversaciones/', views.lista_conversaciones_view, name='lista_conversaciones'),
+    path('ver_conversacion/<int:conversacion_id>/', views.ver_conversacion, name='ver_conversacion'),
+    path('enviar_mensaje/<int:conversacion_id>/', views.enviar_mensaje, name='enviar_mensaje'),
+    path('crear_conversacion', views.crear_conversacion, name='crear_conversacion'),
+
     
 ]

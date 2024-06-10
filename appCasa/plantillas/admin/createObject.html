@@ -6,7 +6,7 @@
 {% block title %}Admin Panel{% endblock %}
 
 {% block extra_links %}
-<link rel="stylesheet" href="{% static 'appCasa/css/admin/createCasas.css' %}">
+<link rel="stylesheet" href="{% static 'appCasa/css/admin/createObject.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -44,8 +44,8 @@
                 <input type="number" class="form-control" id="max_inquilinos" name="max_inquilinos">
             </div>
             <div class="mb-3">
-                <label for="precio_noche" class="form-label">Precio por noche</label>
-                <input type="number" class="form-control" id="precio_noche" name="precio_noche">
+                <label for="precio_noche_persona" class="form-label">Precio por noche/persona</label>
+                <input type="text" class="form-control" id="precio_noche_persona" name="precio_noche_persona">
             </div>
             <div class="mb-3">
                 <label for="img_url" class="form-label">URL Imagen</label>
@@ -55,11 +55,16 @@
                 <label for="url_name" class="form-label">Nombre URL</label>
                 <input type="text" class="form-control" id="url_name" name="url_name">
             </div>
+            <div class="mb-3">
+                <label for="dias_cancel" class="form-label">Dias para cancelacion</label>
+                <input type="text" class="form-control" id="dias_cancel" name="dias_cancel">
+            </div>
 
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
         <a href="{% url 'admin_casas' %}" class="btn btn-secondary mt-3">Volver</a>
     </div>
+
 
 {% elif tipo_objeto == 'inquilino' %}
     <div class="container mt-5">
@@ -96,6 +101,7 @@
         <a href="{% url 'admin_inquilinos' %}" class="btn btn-secondary mt-3">Volver</a>
     </div>
 
+
     {% elif tipo_objeto == 'restaurante' %}
     <div class="container mt-5">
         <h1>Crear Restaurante</h1>
@@ -131,11 +137,89 @@
                 <label for="precio_medio" class="form-label">Precio Medio</label>
                 <input type="text" class="form-control" id="precio_medio" name="precio_medio" required>
             </div>
+
+            <div class="mb-3">
+                <label for="img_url" class="form-label">URL Imagen</label>
+                <input type="text" class="form-control" id="img_url" name="img_url">
+            </div>
+            <div class="mb-3">
+                <label for="url_name" class="form-label">Nombre URL</label>
+                <input type="text" class="form-control" id="url_name" name="url_name">
+            </div>
     
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
         <a href="{% url 'admin_restaurantes' %}" class="btn btn-secondary mt-3">Volver</a>
     </div>
+
+
+    {% elif tipo_objeto == 'reserva' %}
+    <div class="container mt-5">
+        <h1>Crear Reserva</h1>
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Campo para seleccionar la casa -->
+            <div class="mb-3">
+                <label for="casa" class="form-label">Casa</label>
+                <select class="form-control" id="casa" name="casa" required>
+                    {% for casa in casas %}
+                        <option value="{{ casa.id }}">{{ casa.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Campo para seleccionar el inquilino -->
+            <div class="mb-3">
+                <label for="inquilino" class="form-label">Inquilino</label>
+                <select class="form-control" id="inquilino" name="inquilino" required>
+                    {% for inquilino in inquilinos %}
+                        <option value="{{ inquilino.id }}">{{ inquilino.user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <!-- Campo para la fecha de entrada -->
+            <div class="mb-3">
+                <label for="fecha_entrada" class="form-label">Fecha de Entrada</label>
+                <input type="date" class="form-control" id="fecha_entrada" name="fecha_entrada" required>
+            </div>
+            
+            <!-- Campo para la fecha de salida -->
+            <div class="mb-3">
+                <label for="fecha_salida" class="form-label">Fecha de Salida</label>
+                <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" required>
+            </div>
+    
+            <!-- Campo para el número de inquilinos -->
+            <div class="mb-3">
+                <label for="num_inquilinos" class="form-label">Número de Inquilinos</label>
+                <input type="number" class="form-control" id="num_inquilinos" name="num_inquilinos" required>
+            </div>
+    
+            <!-- Campo para el número de menores -->
+            <div class="mb-3">
+                <label for="num_menores" class="form-label">Número de Menores</label>
+                <input type="number" class="form-control" id="num_menores" name="num_menores">
+            </div>
+            
+            <!-- Campo para el precio total -->
+            <div class="mb-3">
+                <label for="precio_total" class="form-label">Precio Total</label>
+                <input type="text" class="form-control" id="precio_total" name="precio_total" required>
+            </div>
+    
+            <!-- Checkbox para saber si la reserva está cancelada -->
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="cancelada" name="cancelada">
+                <label class="form-check-label" for="cancelada">Cancelada</label>
+            </div>
+    
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a href="{% url 'admin_reservas' %}" class="btn btn-secondary mt-3">Volver</a>
+    </div>
+
 {% endif %}
 
 {% endblock %}

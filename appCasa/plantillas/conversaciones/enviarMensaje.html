@@ -1,0 +1,28 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Enviar Mensaje{% endblock %}
+
+{% block extra_links %}
+
+<link rel="stylesheet" href="{% static 'appCasa/css/conversaciones/enviarMensaje.css' %}">
+
+{% endblock %}
+
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Enviar Mensaje</h1>
+    <form method="post" class="form-enviar-mensaje">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="texto">Mensaje:</label>
+            <textarea class="form-control" id="texto" name="texto" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+</div>
+{% endblock %}

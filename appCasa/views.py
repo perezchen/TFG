@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Casa, Inquilino, Reserva, Reserva_restaurante, Restaurante
+from .models import Casa, Conversacion, Inquilino, Mensaje, Reserva, Reserva_restaurante, Restaurante
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
+from django.utils import timezone
 
 
 def register_view(request):
@@ -104,18 +105,39 @@ def payment_view(request):
         else:
             return redirect('error')
     return render(request, 'payment.html')
+    
+
+# funcion que valora si hay una reserva que ya se solape con la que se va a crear    
+def reserva_disponible(casa_id, fecha_entrada, fecha_salida):
+    # delvovera false(true con negacion) si la reesrva que se qwuiere hacxer esta en el rango de una ya creada completa o parcialmente
+    # devolvera true(false con negacion) si no se solapa niguna reserva ya creada con la nueva
+    return not Reserva.objects.filter(
+        casa_id = casa_id,
+        cancelada = False,
+        fecha_salida__gte = fecha_entrada,
+        fecha_entrada__lte = fecha_salida
+    ).exists()
 
 @login_required
 def reserve_view(request, casa_id):
     if request.method == 'POST':
         
-        request.session['reservation_data'] = {
-            'fecha_entrada': request.POST.get('fecha_entrada'),
-            'fecha_salida': request.POST.get('fecha_salida'),
-            'num_inquilinos': request.POST.get('rangeValue'),
-            'casa_id': casa_id
-        }
-        return render(request, 'payment.html')
+        fecha_entrada = request.POST.get('fecha_entrada')
+        fecha_salida = request.POST.get('fecha_salida')
+        num_inquilinos = request.POST.get('num_inquilinos')
+        num_menores = request.POST.get('num_menores')
+            
+        
+        if reserva_disponible(casa_id, fecha_entrada, fecha_salida):
+            request.session['reservation_data'] = {
+                'fecha_entrada': fecha_entrada,
+                'fecha_salida': fecha_salida,
+                'num_inquilinos': num_inquilinos,
+                'casa_id': casa_id
+            }
+            return render(request, 'payment.html')
+        else:
+            return render(request, 'error.html')
     
     elif 'payment_successful' in request.session and request.session['payment_successful']:
         # Si el pago fue exitoso, procede a crear la reserva
@@ -285,11 +307,55 @@ def admin_restaurantes_view(request):
 # admin view reservas
 
 
-@user_passes_test(check_is_superuser)
 def admin_reservas_view(request):
-    reservas = Reserva.objects.all()
-    return render(request, 'admin/adminReservas.html', {'reservas': reservas})
+    casa_id = request.GET.get('casa_id')
+    inquilino_id = request.GET.get('inquilino_id')
+    selected_year = request.GET.get('year')
+    selected_month = request.GET.get('month')
+    
+    years = range(2022, 2025)
 
+    # Lista de meses
+    months = [
+        (1, 'Enero'), (2, 'Febrero'), (3, 'Marzo'), (4, 'Abril'),
+        (5, 'Mayo'), (6, 'Junio'), (7, 'Julio'), (8, 'Agosto'),
+        (9, 'Septiembre'), (10, 'Octubre'), (11, 'Noviembre'), (12, 'Diciembre')
+    ]
+    
+    base_query = Reserva.objects.all()
+
+    # Aplicar filtro por casa si casa_id está presente.
+    if casa_id:
+        base_query = base_query.filter(casa__id=casa_id)
+    # Aplicar filtro por inquilino si inquilino_id está presente.
+    if inquilino_id:
+        base_query = base_query.filter(inquilino__id=inquilino_id)
+    if selected_year:
+        base_query = base_query.filter(fecha_entrada__year = selected_year)
+    if selected_month:
+        base_query = base_query.filter(fecha_entrada__month=selected_month)
+
+    # Ahora aplicamos las condiciones de estado sobre la consulta filtrada.
+    reservas = base_query.filter(cancelada=False)
+    reservas_canceladas = base_query.filter(cancelada=True)
+    reservas_pasadas = base_query.filter(fecha_salida__lt=timezone.now())
+    reservas_futuras = base_query.filter(fecha_entrada__gt=timezone.now())
+
+    return render(request, 'admin/adminReservas.html', {
+        'reservas': reservas,
+        'reservas_canceladas': reservas_canceladas,
+        'reservas_pasadas': reservas_pasadas,
+        'reservas_futuras': reservas_futuras,
+        'casas': Casa.objects.all(),
+        'inquilinos': Inquilino.objects.all(),
+        'casa_id': casa_id,
+        'inquilino_id': inquilino_id,
+        'years': years,
+        'selected_year': selected_year,
+        'months': months,
+        'selected_month': selected_month
+    })
+    
 # admin view reservas restaurantes
 
 
@@ -303,6 +369,8 @@ def admin_reservas_restaurantes_view(request):
 
 @user_passes_test(check_is_superuser)
 def create_object_view(request, tipo_objeto):
+    casas = Casa.objects.all()
+    inquilinos = Inquilino.objects.all()
 
     if request.method == 'POST':
         if tipo_objeto == 'casa':
@@ -312,11 +380,33 @@ def create_object_view(request, tipo_objeto):
             descripcion = request.POST.get('descripcion')
             num_habitaciones = request.POST.get('num_habitaciones')
             max_inquilinos = request.POST.get('max_inquilinos')
-            precio_noche = request.POST.get('precio_noche')
             img_url = request.POST.get('img_url')
             url_name = request.POST.get('url_name')
-            Casa.objects.create(licencia=licencia, nombre=nombre, direccion=direccion, descripcion=descripcion,
-                                numero_habitaciones=num_habitaciones, max_inquilinos=max_inquilinos, precio_por_noche=precio_noche, img_url=img_url, url_name=url_name)
+
+            # Preparamos el diccionario básico con datos obligatorios
+            casa_data = {
+                "licencia": licencia,
+                "nombre": nombre,
+                "direccion": direccion,
+                "descripcion": descripcion,
+                "numero_habitaciones": num_habitaciones,
+                "max_inquilinos": max_inquilinos,
+                "img_url": img_url,
+                "url_name": url_name
+            }
+            
+            # Añadir precio_noche_persona solo si está presente en el formulario
+            precio_noche_persona = request.POST.get('precio_noche_persona')
+            if precio_noche_persona:
+                casa_data["precio_noche_persona"] = precio_noche_persona
+
+            # Añadir dias_cancel solo si está presente en el formulario
+            dias_cancel = request.POST.get('dias_cancel')
+            if dias_cancel:
+                casa_data["dias_cancel"] = dias_cancel
+
+            # Crear la casa con los datos recopilados
+            Casa.objects.create(**casa_data)
             return redirect('admin_casas')
 
         elif tipo_objeto == 'inquilino':
@@ -336,11 +426,48 @@ def create_object_view(request, tipo_objeto):
             direccion = request.POST['direccion']
             descripcion = request.POST['descripcion']
             precio_medio = request.POST['precio_medio']
+            img_url = request.POST.get('img_url')
+            url_name = request.POST.get('url_name')
             Restaurante.objects.create(numero_licencia=numero_licencia, nombre=nombre,
-                                       direccion=direccion, descripcion=descripcion, precio_medio=precio_medio)
+                                       direccion=direccion, descripcion=descripcion, precio_medio=precio_medio,
+                                       img_url=img_url, url_name=url_name)
             return redirect('admin_restaurantes')
 
-    return render(request, 'admin/createObject.html', {'tipo_objeto': tipo_objeto})
+        elif tipo_objeto == 'reserva':
+            casa_id = request.POST.get('casa')
+            inquilino_id = request.POST.get('inquilino')
+            fecha_entrada = request.POST.get('fecha_entrada')
+            fecha_salida = request.POST.get('fecha_salida')
+            num_inquilinos = request.POST.get('num_inquilinos')
+            precio_total = request.POST.get('precio_total')
+
+            # Creamos un diccionario para los datos de la reserva
+            reserva_data = {
+                "casa_id": casa_id,
+                "inquilino_id": inquilino_id,
+                "fecha_entrada": fecha_entrada,
+                "fecha_salida": fecha_salida,
+                "num_inquilinos": num_inquilinos,
+                "precio_total": precio_total
+            }
+
+            # Añadir num_menores solo si está presente en el formulario
+            num_menores = request.POST.get('num_menores')
+            if num_menores != '':
+                reserva_data["num_menores"] = num_menores
+
+            # Añadir cancelada solo si está marcada en el formulario
+            cancelada = request.POST.get('cancelada')
+            if cancelada == 'on':
+                reserva_data["cancelada"] = True
+            else:
+                reserva_data["cancelada"] = False  # Esto es opcional, depende de si quieres explícitamente establecer False o no
+
+            # Crear la reserva con los datos recopilados
+            reserva = Reserva.objects.create(**reserva_data)
+            return redirect('admin_reservas')
+        
+    return render(request, 'admin/createObject.html', {'tipo_objeto': tipo_objeto, 'casas': casas, 'inquilinos': inquilinos})
 
 
 @user_passes_test(check_is_superuser)
@@ -348,7 +475,10 @@ def update_object_view(request, tipo_objeto, object_id):
     # Esta parte sera la misma ara todos los objetods que vegan, ya que es para renderizar los datos, asi nos ahorramos repetirla en cada if
     models = {
         'casa': Casa,
-        'inquilino': Inquilino
+        'inquilino': Inquilino,
+        'restaurante': Restaurante,
+        'reserva': Reserva
+        
     }
     # Obtener el modelo correcto para el tipo de objeto
     if tipo_objeto in models:
@@ -368,25 +498,60 @@ def update_object_view(request, tipo_objeto, object_id):
             casa.descripcion = request.POST.get('descripcion')
             casa.numero_habitaciones = request.POST.get('num_habitaciones')
             casa.max_inquilinos = request.POST.get('max_inquilinos')
-            casa.precio_por_noche = request.POST.get('precio_noche')
+            casa.precio_noche_persona = request.POST.get('precio_noche_persona')
             casa.img_url = request.POST.get('img_url')
             casa.url_name = request.POST.get('url_name')
+            casa.dias_cancel = request.POST.get('dias_cancel')
             casa.save()
+            
             return redirect('admin_casas')
+        
+        
+        
         elif tipo_objeto == 'inquilino':
             inquilino = get_object_or_404(Inquilino, id=object_id)
             user = inquilino.user
             user.username = request.POST.get('username')
             user.email = request.POST.get('email')
-            # ¡Importante! No actualizar la contraseña así sin más, considera usar set_password
+
             nueva_contraseña = request.POST.get('password')
             if nueva_contraseña:
                 user.set_password(nueva_contraseña)
+
             user.save()
+            
             inquilino.dni = request.POST.get('dni')
             inquilino.address = request.POST.get('address')
             inquilino.save()
+            
             return redirect('admin_inquilinos')
+        
+        
+        
+        elif tipo_objeto == 'restaurante':
+            restaurante = get_object_or_404(Restaurante, id=object_id)
+            restaurante.numero_licencia = request.POST.get('num_licencia')
+            restaurante.nombre = request.POST.get('nombre')
+            restaurante.direccion = request.POST.get('direccion')
+            restaurante.descripcion = request.POST.get('descripcion')
+            restaurante.precio_medio = request.POST.get('precio_medio')
+            restaurante.img_url = request.POST.get('img_url')
+            restaurante.url_name = request.POST.get('url_name')
+            restaurante.save()
+            
+            return redirect('admin_restaurantes')
+        
+        
+        elif tipo_objeto == 'reserva':
+            reserva = get_object_or_404(Reserva, id=object_id)
+            reserva.fecha_entrada = request.POST.get('fecha_entrada')
+            reserva.fecha_salida = request.POST.get('fecha_salida')
+            reserva.num_inquilinos = request.POST.get('num_inquilinos')
+            reserva.num_menores = request.POST.get('num_menores')
+            reserva.precio_total = request.POST.get('precio_total')
+            reserva.cancelada = request.POST.get('cancelada')
+            reserva.save()
+            return redirect('admin_reservas')
 
     return render(request, 'admin/updateObject.html', {'object': object, 'tipo_objeto': tipo_objeto})
 
@@ -397,7 +562,8 @@ def delete_object_view(request, tipo_objeto, object_id):
     models = {
         'casa': Casa,
         'inquilino': Inquilino,
-        'restaurante': Restaurante
+        'restaurante': Restaurante,
+        'reserva': Reserva
     }
     # Obtener el modelo correcto para el tipo de objeto
     if tipo_objeto in models:
@@ -409,10 +575,13 @@ def delete_object_view(request, tipo_objeto, object_id):
 
     # aunque sea redundante, lo hacemos parfa tener mas constancia de por donde va nuestro codigo
     if request.method == 'POST':
+        
         if tipo_objeto == 'casa':
             casa = get_object_or_404(Casa, id=object_id)
             casa.delete()
             return redirect('admin_casas')
+        
+        
         elif tipo_objeto == 'inquilino':
             # obtenemos el inquilino como metodo para obtener luego el user
             inquilino = get_object_or_404(Inquilino, id=object_id)
@@ -420,14 +589,25 @@ def delete_object_view(request, tipo_objeto, object_id):
             # al eliminar el user se elimina el inquilino por el delete cascade
             user.delete()
             return redirect('admin_inquilinos')
+        
+        
         elif tipo_objeto == 'restaurante':
             # obtenemos el restaurante como metodo para obtener luego el user
             restaurante = get_object_or_404(Restaurante, id=object_id)
             # al eliminar el user se elimina el inquilino por el delete cascade
             restaurante.delete()
             return redirect('admin_restaurantes')
-
+        
+        
+        elif tipo_objeto == 'reserva':
+            reserva = get_object_or_404(Reserva, id = object_id)
+            reserva.cancelada = True
+            reserva.save()
+            return redirect('admin_reservas')
+        
     return render(request, 'admin/deleteObject.html', {'object': object, 'tipo_objeto': tipo_objeto})
+
+
 
 
 def user_profile_view(request):
@@ -441,3 +621,66 @@ def user_profile_view(request):
         'reservas_casas': reservas_casas,
         'reservas_restaurantes': reservas_restaurantes,
     })
+
+
+
+# Mensajes 
+
+@login_required
+def lista_conversaciones_view(request):
+    # Suponiendo que el usuario está involucrado en 'conversaciones'
+    conversaciones = request.user.conversaciones.all()
+    return render(request, 'conversaciones/listaConversaciones.html', {'conversaciones': conversaciones})
+
+@login_required
+def ver_conversacion(request, conversacion_id):
+    conversacion = Conversacion.objects.get(id=conversacion_id)
+    mensajes = conversacion.mensajes.order_by('fecha_hora')
+    return render(request, 'conversaciones/verConversacion.html', {'mensajes': mensajes, 'conversacion_id': conversacion_id})
+
+# Enviar mensaje o respuesta
+@login_required
+def enviar_mensaje(request, conversacion_id):
+    if request.method == 'POST':
+        texto = request.POST.get('texto')
+        autor = request.user
+        conversacion = Conversacion.objects.get(id=conversacion_id)
+        Mensaje.objects.create(autor=autor, texto=texto, conversacion=conversacion)
+        return redirect('ver_conversacion', conversacion_id=conversacion_id)
+    return render(request, 'conversaciones/enviarMensaje.html', {'conversacion_id': conversacion_id})
+
+
+@login_required
+def crear_conversacion(request):
+    if request.method == 'POST':
+        asunto = request.POST.get('asunto')
+        texto = request.POST.get('texto')
+        conversacion = Conversacion.objects.create(asunto=asunto)
+
+        if request.user.is_superuser:
+            # Superusuario crea la conversación
+            usuario_id = request.POST.get('usuario_id')  # ID del usuario normal seleccionado por el superusuario
+            usuario = User.objects.get(id=usuario_id)
+            conversacion.participantes.add(usuario)
+            conversacion.participantes.add(request.user)
+        else:
+            # Usuario normal crea la conversación
+            superuser = User.objects.get(is_superuser=True, username='chencho2')
+            conversacion.participantes.add(superuser)
+            conversacion.participantes.add(request.user)
+        
+        # Crear el primer mensaje en la conversación
+        Mensaje.objects.create(
+            autor=request.user,
+            conversacion=conversacion,
+            texto=texto
+        )
+        
+        return redirect('lista_conversaciones')
+    else:
+        if request.user.is_superuser:
+            usuarios = User.objects.filter(is_superuser=False)
+        else:
+            usuarios = None
+        return render(request, 'conversaciones/crearConversacion.html', {'usuarios': usuarios})
+

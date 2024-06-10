@@ -1,0 +1,42 @@
+<!-- templates/admin_panel.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Crear Conversacion{% endblock %}
+
+{% block extra_links %}
+
+<link rel="stylesheet" href="{% static 'appCasa/css/conversaciones/crearConversacion.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Crear Nueva Conversación</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="asunto" class="form-label">Asunto:</label>
+            <input type="text" class="form-control" id="asunto" name="asunto" required>
+        </div>
+        <div class="mb-3">
+            <label for="texto" class="form-label">Mensaje:</label>
+            <textarea class="form-control" id="texto" name="texto" required></textarea>
+        </div>
+        {% if usuarios %}
+        <div class="mb-3">
+            <label for="usuario_id" class="form-label">Seleccione un Usuario:</label>
+            <select class="form-control" id="usuario_id" name="usuario_id">
+                {% for usuario in usuarios %}
+                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Crear Conversación</button>
+        <a href="{% url 'lista_conversaciones' %}" class="btn btn-primary">Lista de Conversaciones</a>
+    </form>
+</div>
+{% endblock %}

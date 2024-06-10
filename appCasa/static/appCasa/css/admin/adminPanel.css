@@ -13,3 +13,8 @@ body {
 .card-header{
     font-size: 1.5rem;
 }
+
+h1 {
+    color: whitesmoke;
+    text-align: center;
+}
