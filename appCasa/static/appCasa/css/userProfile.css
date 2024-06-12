@@ -26,3 +26,18 @@ body {
 .btn-primary {
     background-color: #007bff;
 }
+
+.div-contactar-admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-link {
+    color: whitesmoke !important;
+}
+
+.nav-link.active{
+    color: black !important;
+
+}

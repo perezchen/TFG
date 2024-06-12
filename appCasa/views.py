@@ -136,8 +136,7 @@ def reserve_view(request, casa_id):
                 'casa_id': casa_id
             }
             return render(request, 'payment.html')
-        else:
-            return render(request, 'error.html')
+
     
     elif 'payment_successful' in request.session and request.session['payment_successful']:
         # Si el pago fue exitoso, procede a crear la reserva
@@ -178,7 +177,6 @@ def casas_panel(request):
 @login_required
 def casa_rio_view(request):
     casa = get_object_or_404(Casa, nombre='Casa Rio')
-
     return render(request, 'casas/casaRio.html', {'casa': casa})
 
 

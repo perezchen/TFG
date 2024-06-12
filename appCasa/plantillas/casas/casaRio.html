@@ -76,19 +76,41 @@
       </div>
     </div>
 
-    <!-- Número de inquilinos -->
-    <label style="color: white;" for="rangeInquilinos" class="form-label">Nº inquilinos</label>
-    <input style="color: wheat;" type="range" class="form-range" min="0" max="8"
-      step="1" id="rangeInquilinos">
-    <span style="color: white;" id="rangeValueInquilinos"></span>
-    <input type="hidden" id="rangeValueInputInquilinos" name="num_inquilinos">
 
-    <!-- Número de menores de 15 años -->
-    <label style="color: white;" for="rangeMenores" class="form-label">Nº menores 15</label>
-    <input style="color: wheat;" type="range" class="form-range" min="0" max="8"
-      step="1" id="rangeMenores">
-    <span style="color: white;" id="rangeValueMenores"></span>
-    <input type="hidden" id="rangeValueInputMenores" name="num_menores">
+    <!-- Número de inquilinos -->
+    <div class="range-class-div">
+
+      <label style="color: white;" for="rangeInquilinos" class="form-label">Nº inquilinos</label>
+      <input style="color: wheat;" type="range" class="form-range" min="0" max="{{ casa.max_inquilinos }}"
+        step="1" id="rangeInquilinos">
+      <span style="color: white;" id="rangeValueInquilinos"></span>
+      <input type="hidden" id="rangeValueInputInquilinos" name="num_inquilinos">
+    </div>
+   <br>
+   <div class="range-class-div">
+     <!-- Número de menores de 15 años -->
+     <label style="color: white;" for="rangeMenores" class="form-label">Nº menores 15</label>
+     <input style="color: wheat;" type="range" class="form-range" min="0" max="5"
+       step="1" id="rangeMenores">
+     <span style="color: white;" id="rangeValueMenores"></span>
+     <input type="hidden" id="rangeValueInputMenores" name="num_menores">
+
+   </div>
+<br>
+<br>
+<div class="div-precios">
+  <div>
+    <label for="precio_noche_persona">Precio persona\noche:</label>
+    <input placeholder="Selecciona una fecha" type="text" id="precio_noche_persona"
+      name="precio_noche_persona" value="{{ casa.precio_noche_persona }}">
+  </div>
+  <div>
+    <label for="precio_total">Precio total:</label>
+    <input placeholder="Selecciona una fecha" type="text" id="precio_total"
+      name="precio_total">
+  </div>
+
+</div>
 
     <div class="btn_reserve">
       <button id="btn-reserve" type="submit" class="btn btn-info">
@@ -97,6 +119,39 @@
     </div>
   </form>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const numInquilinos = document.getElementById('rangeInquilinos');
+      const fechaEntrada = document.getElementById('fecha_entrada');
+      const fechaSalida = document.getElementById('fecha_salida');
+      const precioNoche = document.getElementById('precio_noche_persona');
+      const precioTotal = document.getElementById('precio_total');
+
+
+  
+      function calcularPrecioTotal() {
+        if (fechaEntrada.value && fechaSalida.value && numInquilinos.value && precioNoche.value) {
+            const startDate = new Date(fechaEntrada.value);
+            const endDate = new Date(fechaSalida.value);
+
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diferencia en días
+
+            const total = diffDays * numInquilinos.value * parseFloat(precioNoche.value);
+            precioTotal.value = total.toFixed(2); // Asumiendo que quieres dos decimales
+
+        } else {
+            precioTotal.value = ''; // Limpiar si alguna entrada está incompleta
+        }
+    }
+
+      // Escuchar cambios en los elementos relevantes
+      numInquilinos.addEventListener('input', calcularPrecioTotal);
+      fechaEntrada.addEventListener('change', calcularPrecioTotal);
+      fechaSalida.addEventListener('change', calcularPrecioTotal);
+  });
+  </script>
+
 
 <script>
         $(document).ready(function() {

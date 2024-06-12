@@ -10,45 +10,71 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="container mt-5">
-    <div class="card">
-        <h5 class="card-header">Perfil del Usuario</h5>
-        <div class="card-body">
-            <p class="card-text"><strong>Username:</strong> {{ inquilino.user.username }}</p>
-            <p class="card-text"><strong>Email:</strong> {{ inquilino.user.email }}</p>
-            <p class="card-text"><strong>DNI:</strong> {{ inquilino.dni }}</p>
-            <p class="card-text"><strong>Dirección:</strong> {{ inquilino.address }}</p>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#perfil">Perfil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#reservasCasas">Reservas de Casas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#reservasRestaurantes">Reservas de Restaurantes</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="perfil">
+            <div class="card">
+                <h5 class="card-header">Perfil del Usuario</h5>
+                <div class="card-body">
+                    <p class="card-text"><strong>Username:</strong> {{ inquilino.user.username }}</p>
+                    <p class="card-text"><strong>Email:</strong> {{ inquilino.user.email }}</p>
+                    <p class="card-text"><strong>DNI:</strong> {{ inquilino.dni }}</p>
+                    <p class="card-text"><strong>Dirección:</strong> {{ inquilino.address }}</p>
+                </div>
+            </div>
+            <div class="div-contactar-admin">
+                <p style="color:whitesmoke; margin-top: 50px">Si desea hacer alguna modificación, por favor, contacte con el administrador</p>
+                <a title="Contactar con el adminitrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
+            </div>
+        </div>
+
+
+        <div class="tab-pane fade" id="reservasCasas">
+            <div class="card">
+                <h5 class="card-header">Reservas de Casas</h5>
+                <div class="card-body">
+                    {% for reserva in reservas_casas %}
+                    <p>Reserva en {{ reserva.casa.nombre }} desde {{ reserva.fecha_entrada }} hasta {{ reserva.fecha_salida }}</p>
+                    {% empty %}
+                    <p>No tienes reservas de casas.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="div-contactar-admin">
+                <p style="color:whitesmoke; margin-top: 50px">Si desea hacer alguna modificación, por favor, contacte con el administrador</p>
+                <a title="Contactar con el adminitrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="reservasRestaurantes">
+            <div class="card">
+                <h5 class="card-header">Reservas de Restaurantes</h5>
+                <div class="card-body">
+                    {% for reserva in reservas_restaurantes %}
+                    <p>Reserva en {{ reserva.restaurante.nombre }} para el {{ reserva.fecha_reserva }} a las {{ reserva.hora_reserva }}</p>
+                    {% empty %}
+                    <p>No tienes reservas en restaurantes.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="div-contactar-admin">
+                <p style="color:whitesmoke; margin-top: 50px">Si desea hacer alguna modificación, por favor, contacte con el administrador</p>
+                <a title="Contactar con el adminitrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="container mt-5">
-    <div class="card">
-        <h5 class="card-header">Reservas casas</h5>
-        <div class="card-body">
-            {% for reserva in reservas_casas %}
-            <p>Reserva en {{ reserva.casa.nombre }} desde {{ reserva.fecha_entrada }} hasta {{ reserva.fecha_salida }}</p>
-            {% empty %}
-            <p>No tienes reservas de casas.</p>
-            {% endfor %}
-        
-        </div>
-    </div>
-</div>
-
-
-<div class="container mt-5">
-    <div class="card">
-        <h5 class="card-header">Reservas restaurantes</h5>
-        <div class="card-body">
-            {% for reserva in reservas_restaurantes %}
-            <p>Reserva en {{ reserva.restaurante.nombre }} para el {{ reserva.fecha_reserva }} a las {{ reserva.hora_reserva }}</p>
-            {% empty %}
-            <p>No tienes reservas en restaurantes.</p>
-            {% endfor %}
-        
-        </div>
-    </div>
-</div>
 {% endblock %}

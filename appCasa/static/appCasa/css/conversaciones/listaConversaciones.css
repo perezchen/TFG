@@ -2,3 +2,21 @@ body {
     background-color: darkslategray !important;
     color: white !important;
 }
+
+
+.table-dark {
+    background-color: #343a40; /* Bootstrap dark table background */
+}
+
+.btn-light {
+    color: #343a40; /* Dark text for better contrast on light buttons */
+    border-color: #f8f9fa; /* Light border to make the button stand out */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #495057; /* Slightly lighter gray for hover effect */
+}
+
+.text-white {
+    color: whitesmoke; /* Ensuring text is clearly visible against dark backgrounds */
+}

@@ -17,7 +17,7 @@
     <body>
         <header class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid d-flex justify-content-between">
-                <a class="navbar-brand me-auto" href="#">
+                <a class="navbar-brand me-auto" href="#" title="Inicio">
                     <i class="fa-solid fa-house"></i>
                 </a>
                 <button
@@ -27,54 +27,46 @@
                     data-bs-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup"
                     aria-expanded="false"
-                    aria-label="Toggle navigation">
+                    aria-label="Toggle navigation"
+                    title="Menú">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div
-                    class="collapse navbar-collapse justify-content-center"
-                    id="navbarNavAltMarkup">
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a style="color: white;" class="nav-link" href="{% url 'index' %}">Inicio</a>
-                        <a style="color: white;" class="nav-link" href="#">Galería</a>
-                        <a style="color: white;" class="nav-link" href="{% url 'casas_panel' %}">Casas</a>
-                        <div class="collapse navbar-collapse"
-                            id="navbarNavDarkDropdown">
+                        <a style="color: white;" class="nav-link" href="{% url 'index' %}" title="Página de inicio">Inicio</a>
+                        <a style="color: white;" class="nav-link" href="#" title="Ver galería de imágenes">Galería</a>
+                        <a style="color: white;" class="nav-link" href="{% url 'casas_panel' %}" title="Explorar casas disponibles">Casas</a>
+                        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
                             <ul class="navbar-nav">
                                 <li class="nav-item dropdown">
                                     <a class="btn btn-dark dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        Restaurantes
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false"
+                                       title="Ver restaurantes disponibles">
+                                       Restaurantes
                                     </a>
-                                    <ul
-                                        class="dropdown-menu dropdown-menu-dark">
-                                        <li><a class="dropdown-item"
-                                                href="{% url 'barPaco' %}">Bar
-                                                Paco</a></li>
-                                        <li><a class="dropdown-item"
-                                                href="{% url 'barLoscanillas' %}">Los
-                                                Canillas</a></li>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><a class="dropdown-item" href="{% url 'barPaco' %}" title="Bar Paco">Bar Paco</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'barLoscanillas' %}" title="Los Canillas">Los Canillas</a></li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>
                         
-
-                        <a style="color: white;"class="nav-link"
-                            href="{% url 'crear_conversacion' %}">Contacto</a>
+                        <a style="color: white;" class="nav-link" href="{% url 'crear_conversacion' %}" title="Contactar con nosotros">Contacto</a>
                         <!-- Botón solo para superusuarios -->
                         {% if request.user.is_superuser %}
-                        <a style="color: white;" class="nav-link"
-                            href="{% url 'admin_panel' %}">Panel Administrador</a>
+                        <a style="color: white;" class="nav-link" href="{% url 'admin_panel' %}" title="Acceder al panel de administración">Panel Administrador</a>
                         {% endif %}
                     </div>
                 </div>
                 <form class="d-flex" action="{% url 'log_out' %}" method="post">
                     {% csrf_token %}
-                    <a href="{% url 'user_profile' %}" class="btn btn-success btn-sm">
+                    <a title="Perfil de usuario" href="{% url 'user_profile' %}" class="btn btn-success btn-sm">
                         {{ request.user }}
                     </a>
                     <button
+                        title="Cerrar sesión"
                         type="submit"
                         class="btn btn-outline-success btn-sm ms-2"
                         id="btn-log-out">

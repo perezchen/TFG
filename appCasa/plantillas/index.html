@@ -8,101 +8,114 @@
 
 {% block extra_links %}
 <link rel="stylesheet" href="{% static 'appCasa/css/index.css' %}">
+<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+
 {% endblock %}
 
 {% block content %}
 <main>
-      <div class="img_index">
-        <div class="content">
-          <h1>Bienvenido a Casa Rio</h1>
-          <p class="texto-transparente">
-            Disfruta de Casa Rio o de cualquiera de las otras espectaculares casas de la Axarquia.
-          </p>
-          <a class="btn btn-info" href="{% url 'casas_panel' %}"> Ver nuestras casas </a>
-        </div>
-      </div>
+  <div class="img_index">
+    <div class="content">
+      <h1>Bienvenido a Casa Rio</h1>
+      <p class="texto-transparente">
+        Disfruta de Casa Rio o de cualquiera de las otras espectaculares casas de la Axarquia.
+      </p>
+      <a title="Ir al panel de casas" class="btn btn-info" href="{% url 'casas_panel' %}">Ver nuestras casas</a>
+    </div>
+  </div>
 
-      <div class="container mt-5">
-        <h1 style="text-align: center; margin-bottom: 30px">Privilegios</h1>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="card">
-              <img
-                src="../static/appCasa/images/house.avif"
-                class="card-img-top"
-                alt="Imagen 1" />
-              <div class="card-body">
-                <p class="card-text">
-                  Estar en contacto con la naturaleza.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <img
-                src="../static/appCasa/images/mountain.webp"
-                class="card-img-top"
-                alt="Imagen 2" />
-              <div class="card-body">
-                <p class="card-text">
-                  Estar en contacto con la naturaleza.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <img
-                src="../static/appCasa/images/jardin.webp"
-                class="card-img-top"
-                alt="Imagen 3" />
-              <div class="card-body">
-                <p class="card-text">
-                  Estar en contacto con la naturaleza.
-                </p>
-              </div>
-            </div>
+  <div class="container mt-5">
+    <h1 style="text-align: center; margin-bottom: 30px">Privilegios</h1>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+          <img
+            src="../static/appCasa/images/house.avif"
+            class="card-img-top"
+            alt="Casa en la naturaleza"
+            title="Casa en la naturaleza" />
+          <div class="card-body">
+            <p class="card-text">
+              Estar en contacto con la naturaleza.
+            </p>
           </div>
         </div>
       </div>
-
-      <div class="separator">
-
+      <div class="col-md-4">
+        <div class="card">
+          <img
+            src="../static/appCasa/images/mountain.webp"
+            class="card-img-top"
+            alt="Vista de la montaña"
+            title="Vista de la montaña" />
+          <div class="card-body">
+            <p class="card-text">
+              Estar en contacto con la naturaleza.
+            </p>
+          </div>
+        </div>
       </div>
+      <div class="col-md-4">
+        <div class="card">
+          <img
+            src="../static/appCasa/images/jardin.webp"
+            class="card-img-top"
+            alt="Jardín hermoso"
+            title="Jardín hermoso" />
+          <div class="card-body">
+            <p class="card-text">
+              Estar en contacto con la naturaleza.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="separator">
+  </div>
 
   <div class="phater-box-icons">
     <div>
       <h1>Características Principales</h1>
     </div>
     <div class="container-icons">
-        <div class="content-icon">
-          <i class="fa-solid fa-water-ladder fa-2x"></i>
-          <p>Piscina</p>
-        </div>
-        <div class="content-icon">
-          <i class="fa-solid fa-heart fa-2x"></i>
-          <p>Zona romántica</p>
-        </div>
-        <div class="content-icon">
-          <i class="fa-solid fa-couch fa-2x"></i>
-          <p>Zona relax</p>
-        </div>
+      <div class="content-icon">
+        <i class="fa-solid fa-water-ladder fa-2x" title="Piscina para relajarse"></i>
+        <p>Piscina</p>
+      </div>
+      <div class="content-icon">
+        <i class="fa-solid fa-heart fa-2x" title="Zona especial para parejas"></i>
+        <p>Zona romántica</p>
+      </div>
+      <div class="content-icon">
+        <i class="fa-solid fa-couch fa-2x" title="Área para descanso y relajación"></i>
+        <p>Zona relax</p>
+      </div>
 
-        <div class="content-icon">
-          <i class="fa-solid fa-cloud-sun fa-2x"></i>
-          <p>Jardin</p>
-        </div>
-        <div class="content-icon">
-          <i class="fa-solid fa-person-hiking fa-2x"></i>
-          <p>Zona senderismo</p>
-        </div>
-        <div class="content-icon">
-          <i class="fa-solid fa-horse fa-2x"></i>
-          <p>Zona animales</p>
-        </div>
+      <div class="content-icon">
+        <i class="fa-solid fa-cloud-sun fa-2x" title="Disfruta del jardín soleado"></i>
+        <p>Jardin</p>
+      </div>
+      <div class="content-icon">
+        <i class="fa-solid fa-person-hiking fa-2x" title="Senderos para explorar"></i>
+        <p>Zona senderismo</p>
+      </div>
+      <div class="content-icon">
+        <i class="fa-solid fa-horse fa-2x" title="Área para interactuar con animales"></i>
+        <p>Zona animales</p>
+      </div>
+    </div>
   </div>
-</div>
-    </main>
-    
+</main>
+
+    <!-- <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip(); 
+      });
+    </script> -->
     {% endblock %}

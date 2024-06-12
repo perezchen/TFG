@@ -12,23 +12,25 @@
 {% endblock %}
 
 {% block content %}
-<h2>Mis Conversaciones</h2>
-<table style="color: whitesmoke;" class="table">
-    <thead>
-        <tr>
-            <th>Asunto</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for conversacion in conversaciones %}
-        <tr>
-            <td>{{ conversacion.asunto }}</td>
-            <td>
-                <a href="{% url 'ver_conversacion' conversacion.id %}" class="btn btn-primary">Mensajes</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container mt-5">
+    <h1 class="text-white">Mis Conversaciones</h1>
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>Asunto</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conversacion in conversaciones %}
+            <tr>
+                <td>{{ conversacion.asunto }}</td>
+                <td>
+                    <a href="{% url 'ver_conversacion' conversacion.id %}" class="btn btn-light">Ver Mensajes</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

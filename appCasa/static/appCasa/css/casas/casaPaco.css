@@ -5,11 +5,6 @@
         height: auto; /* Ajusta la altura para dispositivos móviles */
     }
 
-    #calendar {
-        width: 100%; /* Asegura que el calendario use todo el ancho disponible */
-    }
-
-
     .inputs-dates {
         display: flex; /* Asegura que el contenedor use flexbox */
         flex-direction: column; /* Alinea los elementos en columna */
@@ -24,38 +19,54 @@
         margin-bottom: 10px; /* Añade un poco de margen entre los campos si es necesario */
     }
 
-    .title-reserve {
-        padding: 10px;
-        font-size: 16px !important; /* Reduce el tamaño de la fuente para mejor lectura en pantallas pequeñas */
-    }
-
-    .fc .fc-toolbar-title {
-        font-size: 1.4em; /* Tamaño más pequeño para dispositivos móviles */
-    }
-
-    .fc-toolbar-chunk {
-        font-size: 14px; /* Tamaño de fuente más pequeño para las flechas */
-        padding: 5px 10px; /* Menos padding para ahorrar espacio */
-    }
-
-    .fc .fc-toolbar.fc-header-toolbar{
-        margin-bottom: 1em;
-    }
-
     .form_reserve {
         max-width: fit-content;
     }
+
+    .title-reserve {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .carousel-item img {
+        height: auto;  /* Asegura que la altura de la imagen se ajuste a la proporción correcta */
+        max-width: 100%;  /* Limita el ancho de la imagen al 100% del elemento contenedor */
+        width: 100%;  /* Hace que la imagen ocupe todo el ancho disponible */
+    }
+    
+    #carousel-casa {
+        max-width: 100% !important;  /* Limita el ancho máximo del carrusel al 100% de su contenedor */
+        margin: auto !important;  /* Centra el carrusel horizontalmente */
+    }
+    
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%;  /* Ajusta el ancho de los controles del carrusel si es necesario */
+    }
+    
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        background-size: 100%;  /* Asegura que los íconos de los controles se vean bien en cualquier tamaño */
+    }
+    
+    
+    
 }
 
 /* styles.css */
 body {
-    background: #2B332C !important;
+    background-color: #2B332C !important; /* asegura que se aplique el color */
     margin: 0;
     font-family: 'Arial', sans-serif;
+    color: whitesmoke; /* Asegúrate de que el texto sea visible con el fondo oscuro */
 }
 
 header {
     background-color: #003300;
+}
+
+.title-description{
+    text-align: center;
 }
 
 .calendar-container {
@@ -64,41 +75,13 @@ header {
     align-items: center;
     height: 100vh;
     padding: 10px;
-}
-
-#calendar {
-    width: 90%;
-    max-width: 700px;
-    height: auto;
-    margin-top: 20px;
-}
-
-.fc {
-    color: #E0E0E0;
-}
-
-.fc-daygrid-day {
-    background-color: #3E4742;
-}
-
-.fc-daygrid-day-number {
-    color: #D4D7CD;
-}
-
-.fc-day-today {
-    background-color: #526D54;
-}
-
-.fc-event {
-    background-color: #006400;
-    color: #ffffff;
-    border: none;
+    color: whitesmoke;
 }
 
 .title-reserve {
-    color: whitesmoke;
-    text-align: center;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .inputs-dates {
@@ -120,9 +103,95 @@ header {
     width: 700px;
 }
 
-thead a{
-    text-decoration: none !important;
-    color: whitesmoke;
+
+
+.ui-datepicker.ui-widget {
+    background: #FFFFFF; /* Blanco para el cuerpo del calendario */
+    border: 1px solid #ddd; /* Bordes sutiles */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Sombra suave para resaltar el widget */
 }
 
+.ui-datepicker.ui-widget .ui-datepicker-header.ui-widget-header.ui-helper-clearfix.ui-corner-all {
+    background-color: #35495E; /* Azul grisáceo oscuro para la cabecera */
+    color: white; /* Texto blanco para contraste */
+    border-bottom: 1px solid #2C3E50; /* Borde más oscuro en la parte inferior de la cabecera */
+}
 
+.ui-datepicker.ui-widget .ui-datepicker-calendar .ui-state-default {
+    background: #E5E5E5; /* Gris claro para días seleccionables */
+    color: #333333; /* Texto casi negro para legibilidad */
+}
+
+.ui-datepicker.ui-widget .ui-state-disabled {
+    opacity: 0.5; /* Semi-transparente para los no seleccionables */
+}
+
+.ui-datepicker.ui-widget .reserved .ui-state-default {
+    background-color: #35495E; /* Rojo desaturado para días reservados */
+    color: white; /* Texto blanco para destac ar sobre fondo oscuro */
+    border: 1px solid #BB6060; /* Borde en un tono rojo más oscuro */
+}
+
+.ui-datepicker.ui-widget .ui-state-hover {
+    background-color: #5C8D89; /* Verde azulado para hover */
+    color: white; /* Texto blanco para alto contraste */
+    border-color: #4A6D6B; /* Borde en tono verde azulado oscuro */
+}
+
+.carousel-item img {
+    height: auto;  /* Asegura que la altura de la imagen se ajuste a la proporción correcta */
+    max-width: 100%;  /* Limita el ancho de la imagen al 100% del elemento contenedor */
+    width: 100%;  /* Hace que la imagen ocupe todo el ancho disponible */
+}
+
+#carousel-casa {
+    min-width: 50%;
+    max-width: 50%;  /* Limita el ancho máximo del carrusel al 100% de su contenedor */
+    margin: 5%;  /* Centra el carrusel horizontalmente */
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5%;  /* Ajusta el ancho de los controles del carrusel si es necesario */
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    background-size: 100%;  /* Asegura que los íconos de los controles se vean bien en cualquier tamaño */
+}
+
+.container {
+    background-color: #2c3e50; /* Color de fondo para mejorar el contraste */
+    padding: 20px;
+    color: white;
+  }
+  
+  .form-label {
+    color: #ffffff;
+    display: block; /* Asegura que la etiqueta ocupe su propia línea */
+    margin-bottom: 5px;
+  }
+  
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+  }
+  
+  .price-inputs {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los campos de precio */
+    align-items: center;
+  }
+  
+  .price-field {
+    flex: 1;
+    margin-right: 20px; /* Espacio entre los campos de precio */
+  }
+  
+  .slider-labels {
+    margin-bottom: 20px;
+  }
+  
