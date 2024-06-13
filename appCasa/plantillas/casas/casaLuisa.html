@@ -98,19 +98,18 @@
    </div>
 <br>
 <br>
+
 <div class="div-precios">
   <div>
-    <label for="precio_noche_persona">Precio persona\noche:</label>
-    <input placeholder="Selecciona una fecha" type="text" id="precio_noche_persona"
-      name="precio_noche_persona" value="{{ casa.precio_noche_persona }}">
+    <label for="precio_noche_persona">Precio persona/noche:</label>
+    <div id="precio_noche_persona" data-precio="{{ casa.precio_noche_persona }}">{{ casa.precio_noche_persona }}</div>
   </div>
   <div>
     <label for="precio_total">Precio total:</label>
-    <input placeholder="Selecciona una fecha" type="text" id="precio_total"
-      name="precio_total">
+    <div id="precio_total"></div>
   </div>
-
 </div>
+
 
     <div class="btn_reserve">
       <button id="btn-reserve" type="submit" class="btn btn-info">
@@ -121,36 +120,34 @@
 </div>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-      const numInquilinos = document.getElementById('rangeInquilinos');
-      const fechaEntrada = document.getElementById('fecha_entrada');
-      const fechaSalida = document.getElementById('fecha_salida');
-      const precioNoche = document.getElementById('precio_noche_persona');
-      const precioTotal = document.getElementById('precio_total');
+    const numInquilinos = document.getElementById('rangeInquilinos');
+    const fechaEntrada = document.getElementById('fecha_entrada');
+    const fechaSalida = document.getElementById('fecha_salida');
+    const precioNoche = document.getElementById('precio_noche_persona').dataset.precio;
+    const precioTotal = document.getElementById('precio_total');
 
+    function calcularPrecioTotal() {
+      if (fechaEntrada.value && fechaSalida.value && numInquilinos.value && precioNoche) {
+        const startDate = new Date(fechaEntrada.value);
+        const endDate = new Date(fechaSalida.value);
 
-  
-      function calcularPrecioTotal() {
-        if (fechaEntrada.value && fechaSalida.value && numInquilinos.value && precioNoche.value) {
-            const startDate = new Date(fechaEntrada.value);
-            const endDate = new Date(fechaSalida.value);
+        const diffTime = Math.abs(endDate - startDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diferencia en días
 
-            const diffTime = Math.abs(endDate - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diferencia en días
+        const total = diffDays * numInquilinos.value * parseFloat(precioNoche);
+        precioTotal.textContent = total.toFixed(2); // Asumiendo que quieres dos decimales
 
-            const total = diffDays * numInquilinos.value * parseFloat(precioNoche.value);
-            precioTotal.value = total.toFixed(2); // Asumiendo que quieres dos decimales
-
-        } else {
-            precioTotal.value = ''; // Limpiar si alguna entrada está incompleta
-        }
+      } else {
+        precioTotal.textContent = ''; // Limpiar si alguna entrada está incompleta
+      }
     }
 
-      // Escuchar cambios en los elementos relevantes
-      numInquilinos.addEventListener('input', calcularPrecioTotal);
-      fechaEntrada.addEventListener('change', calcularPrecioTotal);
-      fechaSalida.addEventListener('change', calcularPrecioTotal);
+    // Escuchar cambios en los elementos relevantes
+    numInquilinos.addEventListener('input', calcularPrecioTotal);
+    fechaEntrada.addEventListener('change', calcularPrecioTotal);
+    fechaSalida.addEventListener('change', calcularPrecioTotal);
   });
-  </script>
+</script>
 
 
 <script>

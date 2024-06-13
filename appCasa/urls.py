@@ -6,7 +6,7 @@ urlpatterns = [
     path('index/', views.index_view, name="index"),
     path('register/', views.register_view, name="register"),
     path('log_out/', views.logOut_view, name='log_out'),
-    path('contact/', views.contact_view, name='contact'),
+    path('contact/', views.crear_conversacion, name='contact'),
     path('success/', views.success_view, name='success'),
     path('error/', views.error_view, name='error'),
     path('payment/', views.payment_view, name='payment'),
@@ -22,8 +22,8 @@ urlpatterns = [
     
     
     # restaurantes
-    path('restaurant/', views.restaurant_view, name='restaurant'),
-    path('api_restaurante/<str:restaurante_licencia>/', views.api_restaurante, name='api_restaurante'),
+    path('restaurantes_panel/', views.restaurantes_panel, name='restaurantes_panel'),
+    path('api_restaurante/<str:restaurante_licencia>/<str:turno>/', views.api_restaurante, name='api_restaurante'),
     path('barPaco/', views.bar_paco_view, name='barPaco'),
     path('barLoscanillas/', views.bar_loscanillas_view, name='barLoscanillas'),
     path('reserve_restaurante/<str:restaurante_licencia>/', views.reserva_restaurante, name='reserva_restaurante'),

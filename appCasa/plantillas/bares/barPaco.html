@@ -1,4 +1,3 @@
-<!-- templates/admin_panel.html -->
 {% extends "base.html" %}
 
 {% load static %}
@@ -6,125 +5,100 @@
 {% block title %}Admin Panel{% endblock %}
 
 {% block extra_links %}
-
 <link rel="stylesheet" href="{% static 'appCasa/css/bares/barPaco.css' %}">
-<script
-  src="https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
-      var restauranteLicencia = '{{ restaurante.numero_licencia }}'; // Asegúrate de que esta línea es correcta dentro de tu sistema de plantillas
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: '/api_restaurante/' + restauranteLicencia + '/', // URL que devuelve los datos de las reservas
-        eventColor: '#ff9f89', // Color predeterminado para todos los eventos
-  
-        eventDidMount: function(info) {
-          // Cambia el color de fondo del evento
-          info.el.style.backgroundColor = '#007bff'; // Azul
-          info.el.style.color = '#ffffff'; // Texto blanco para mejor visibilidad
-        },
-  
-        selectable: true, // Permite la selección de fechas individuales
-        selectAllow: function(selectInfo) {
-          const start = new Date(selectInfo.startStr);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0); // Elimina la hora para comparar solo fechas
-          // Verifica que la fecha seleccionada sea futuro y no coincida con eventos existentes
-          return (
-            start >= today &&
-            !calendar.getEvents().some(event => {
-              return new Date(event.start).toDateString() === start.toDateString();
-            })
-          );
-        },
-  
-        select: function(info) {
-          const entrada = document.getElementById('fecha_reserva');
-  
-          // Elimina cualquier evento de fondo que haya sido previamente seleccionado
-          calendar.getEvents().forEach(function(event) {
-            if (event.display === 'background') {
-              event.remove();
-            }
-          });
-  
-          // Establece la fecha de entrada
-          entrada.value = info.startStr;
-  
-          // Añade un evento de fondo para visualizar la selección
-          calendar.addEvent({
-            start: info.startStr,
-            end: info.startStr,
-            display: 'background',
-            backgroundColor: '#ffcccc',
-          });
-        },
-  
-        longPressDelay: 1, // Mantiene la configuración de retardo para pulsación larga
-      });
-  
-      calendar.render();
-    });
-  </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 {% endblock %}
 
 {% block content %}
-
 <div class="calendar-container">
   <div class="title-reserve">
     <h1>{{ restaurante.nombre }}</h1>
-    <h2>Bienvenido a nuestro calendario de reservas de bar Paco</h2>
-    <p>
-      Por favor, seleccione los días que le gustaría visitar nuestra
-      estancia:
-    </p>
+    <h2>Bienvenido a nuestro calendario de reservas de Bar Paco</h2>
+    <p>Por favor, seleccione los días que le gustaría visitar nuestra estancia:</p>
   </div>
 
-  <div id="calendar"></div>
-
-<form class="form_reserve" action="{% url 'reserva_restaurante' restaurante.numero_licencia %}" method="post">
-  {% csrf_token %}
-  <div class="inputs-dates">
-    <div>
-      <label for="fecha_reserva">Fecha de la Reserva:</label>
-      <input type="date" id="fecha_reserva" name="fecha_reserva" />
+  <form class="form_reserve" action="{% url 'reserva_restaurante' restaurante.numero_licencia %}" method="post">
+    {% csrf_token %}
+    <div class="inputs-dates">
+      <input type="text" id="fecha_reserva_tarde" class="datepicker" placeholder="Selecciona una fecha para la tarde" name="fecha_reserva_tarde">
+      <input type="text" id="fecha_reserva_noche" class="datepicker" placeholder="Selecciona una fecha para la noche" name="fecha_reserva_noche">
     </div>
 
-    <div style="margin-bottom: 20px;">
-      <label for="hora_reserva">Elige una hora para tu reserva:</label>
-      <input type="time" id="hora_reserva" name="hora_reserva"
-             min="09:00" max="23:00" required>
-    </div>
+      <!-- Campo de hora para la tarde -->
+  <div id="hora_reserva_tarde_div" style="display:none;">
+    <label for="hora_reserva_tarde" style="color: white;" class="form-label">Hora de la reserva (tarde)</label>
+    <select id="hora_reserva_tarde" name="hora_reserva_tarde" class="form-control">
+      <option value="13:00">13:00</option>
+      <option value="13:30">13:30</option>
+      <option value="14:00">14:00</option>
+    </select>
   </div>
 
-  <label style="color: white;" for="customRange3" class "form-label">Nº comensales</label>
-  <input style="color: wheat;" type="range" class="form-range" min="0" max="8" step="1" id="customRange3">
-  <span style="color: white;" id="rangeValue"></span>
-  <!-- campo oculto para poder mandar al backen el rango -->
-  <input type="hidden" id="rangeValueInput" name="rangeValue">
-
-  <div class="btn_reserve">
-    <button id="btn-reserve" type="submit" class="btn btn-info">
-      <i style="padding: 5px" class="bi bi-journal-bookmark-fill"></i
-      >Reservar
-    </button>
+  <!-- Campo de hora para la noche -->
+  <div id="hora_reserva_noche_div" style="display:none;">
+    <label for="hora_reserva_noche" style="color: white;" class="form-label">Hora de la reserva (noche)</label>
+    <select id="hora_reserva_noche" name="hora_reserva_noche" class="form-control">
+      <option value="20:00">20:00</option>
+      <option value="20:30">20:30</option>
+      <option value="21:00">21:00</option>
+    </select>
   </div>
-</form>
+  
+    <label for="num_comensales" style="color: white;" class="form-label">Nº comensales</label>
+    <input type="number" id="num_comensales" name="num_comensales" min="1" max="{{ restaurante.max_personas_reserva }}" value="1" class="form-control">
+  
+    <button type="submit" class="btn btn-info">Reservar</button>
+  </form>
 </div>
-</div>
-
 
 <script>
-  const rangeInput = document.getElementById('customRange3');
-  const rangeValueDisplay = document.getElementById('rangeValue');
-  const rangeValueInput = document.getElementById('rangeValueInput');
-
-  rangeInput.addEventListener('input', function() {
-      rangeValueDisplay.textContent = rangeInput.value;
-      rangeValueInput.value = rangeInput.value;
+  $(document).ready(function() {
+    var licencia = '{{ restaurante.numero_licencia }}';
+    function disableDates(datePickerId, turno) {
+      $.ajax({
+        url: `/api_restaurante/${licencia}/${turno}/`, // Asegúrate que la URL es correcta
+        method: 'GET',
+        success: function(data) {
+          console.log(data)
+          let disabledDates = data.filter(reserva => reserva.count >= reserva.max_reservas)
+                                 .map(reserva => reserva.date);
+          $(`#${datePickerId}`).datepicker("option", "beforeShowDay", function(date) {
+              let dateString = $.datepicker.formatDate('yy-mm-dd', date);
+              // Verifica si la fecha debe ser deshabilitada
+              return [!disabledDates.includes(dateString), "", "Fecha no disponible"];
+          });
+      }
+      });
+    }
+  
+    // Inicializa DatePicker para la tarde
+    $("#fecha_reserva_tarde").datepicker({
+      dateFormat: 'yy-mm-dd',
+      minDate: 0,
+      onSelect: function() {
+        $("#hora_reserva_tarde_div").show();
+        $("#hora_reserva_noche_div").hide();
+        $("#fecha_reserva_noche").datepicker("setDate", null); // Limpia el otro DatePicker al seleccionar una fecha
+      }
+    });
+  
+    // Inicializa DatePicker para la noche
+    $("#fecha_reserva_noche").datepicker({
+      dateFormat: 'yy-mm-dd',
+      minDate: 0,
+      onSelect: function() {
+        $("#hora_reserva_noche_div").show();
+        $("#hora_reserva_tarde_div").hide();
+        $("#fecha_reserva_tarde").datepicker("setDate", null); // Limpia el otro DatePicker al seleccionar una fecha
+      }
+    });
+  
+    // Llama a la función para deshabilitar fechas basadas en las reservas para cada turno
+    disableDates('fecha_reserva_tarde', 'tarde');
+    disableDates('fecha_reserva_noche', 'noche');
   });
+  
 </script>
-
 {% endblock %}

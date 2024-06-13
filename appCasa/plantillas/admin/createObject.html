@@ -137,6 +137,16 @@
                 <label for="precio_medio" class="form-label">Precio Medio</label>
                 <input type="text" class="form-control" id="precio_medio" name="precio_medio" required>
             </div>
+            
+            <div class="mb-3">
+                <label for="max_reservas_dia" class="form-label">Máximo de Reservas por Día</label>
+                <input type="number" class="form-control" id="max_reservas_dia" name="max_reservas_dia" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="max_personas_reserva" class="form-label">Máximo de Personas por Reserva</label>
+                <input type="number" class="form-control" id="max_personas_reserva" name="max_personas_reserva" required>
+            </div>
 
             <div class="mb-3">
                 <label for="img_url" class="form-label">URL Imagen</label>
@@ -218,6 +228,71 @@
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
         <a href="{% url 'admin_reservas' %}" class="btn btn-secondary mt-3">Volver</a>
+    </div>
+
+    {% elif tipo_objeto == 'reserva_restaurante' %}
+    <div class="container mt-5">
+        <h1>Crear Reserva de Restaurante</h1>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="tipo_objeto" value="restaurante">
+            
+            <!-- Campo para seleccionar el restaurante -->
+            <div class="mb-3">
+                <label for="restaurante" class="form-label">Restaurante</label>
+                <select class="form-control" id="restaurante" name="restaurante" required>
+                    {% for restaurante in restaurantes %}
+                        <option value="{{ restaurante.id }}">{{ restaurante.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Campo para seleccionar el inquilino -->
+            <div class="mb-3">
+                <label for="inquilino" class="form-label">Inquilino</label>
+                <select class="form-control" id="inquilino" name="inquilino" required>
+                    {% for inquilino in inquilinos %}
+                        <option value="{{ inquilino.id }}">{{ inquilino.user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <!-- Campo para la fecha de la reserva -->
+            <div class="mb-3">
+                <label for="fecha_reserva" class="form-label">Fecha de Reserva</label>
+                <input type="date" class="form-control" id="fecha_reserva" name="fecha_reserva" required>
+            </div>
+            
+            <!-- Campo para la hora de la reserva -->
+            <div class="mb-3">
+                <label for="hora_reserva" class="form-label">Hora de Reserva</label>
+                <input type="time" class="form-control" id="hora_reserva" name="hora_reserva" required>
+            </div>
+    
+            <!-- Campo para el número de comensales -->
+            <div class="mb-3">
+                <label for="num_comensales" class="form-label">Número de Comensales</label>
+                <input type="number" class="form-control" id="num_comensales" name="num_comensales" required>
+            </div>
+    
+            <!-- Campo para el turno -->
+            <div class="mb-3">
+                <label for="turno" class="form-label">Turno</label>
+                <select class="form-control" id="turno" name="turno" required>
+                    <option value="tarde">Tarde</option>
+                    <option value="noche">Noche</option>
+                </select>
+            </div>
+    
+            <!-- Campo para las notas -->
+            <div class="mb-3">
+                <label for="nota" class="form-label">Notas Adicionales</label>
+                <textarea class="form-control" id="nota" name="nota"></textarea>
+            </div>
+    
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        <a href="{% url 'admin_reservas_restaurantes' %}" class="btn btn-secondary mt-3">Volver</a>
     </div>
 
 {% endif %}

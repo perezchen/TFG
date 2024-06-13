@@ -13,33 +13,108 @@
 <div class="container mt-5">
     <h1>Administrar Reservas Restaurantes</h1>
     <a href="{% url 'create_object' 'reserva_restaurante' %}" class="btn btn-primary mb-3">Crear reserva</a>
-    <table class="table table-bordered">
-        <thead style="color: white;">
-            <tr>
-                <th>ID</th>
-                <th>Restaurante</th>
-                <th>Inquilino</th>
-                <th>F_entrada</th>
-                <th>H_reserva</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody style="color: white;">
-            {% for reserva in reservas %}
-            <tr>
-                <td>{{ reserva.id }}</td>
-                <td>{{ reserva.restaurante.nombre }}</td>
-                <td>{{ reserva.inquilino.user.username }}</td>
-                <td>{{ reserva.fecha_reserva }}</td>
-                <td>{{ reserva.hora_reserva}}</td>
-                <td>
-                    <a href="{% url 'update_object' reserva.id 'reserva_restaurante' %}" class="btn btn-sm btn-warning">Editar</a>
-                    <a href="{% url 'delete_object' reserva.id 'reserva_restaurante' %}" class="btn btn-sm btn-danger">Eliminar</a>
-                </td>
-            </tr>
+
+    <form method="get" action="" class="mb-3">
+        <select name="restaurante_id" onchange="this.form.submit()" class="form-control">
+            <option value="">Seleccione un restaurante (Marcar para no filtrar por restaurantes)</option>
+            {% for restaurante in restaurantes %}
+            <option value="{{ restaurante.id }}" {% if restaurante.id|stringformat:"s" == restaurante_id|stringformat:"s" %}selected{% endif %}>
+                {{ restaurante.nombre }}
+            </option>
             {% endfor %}
-        </tbody>
-    </table>
+        </select>
+
+        <select name="inquilino_id" onchange="this.form.submit()" class="form-control">
+            <option value="">Seleccione un inquilino (Marcar para no filtrar por inquilinos)</option>
+            {% for inquilino in inquilinos %}
+            <option value="{{ inquilino.id }}" {% if inquilino.id|stringformat:"s" == inquilino_id|stringformat:"s" %}selected{% endif %}>
+                {{ inquilino.user.username }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+    
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#activas" data-bs-toggle="tab">Activas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#pasadas" data-bs-toggle="tab">Pasadas</a>
+        </li>
+    </ul>
+    
+
+    <div class="tab-content">
+
+        <div class="tab-pane fade show active" id="activas">
+
+            <table class="table table-bordered">
+                <thead style="color: white;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Restaurante</th>
+                        <th>Inquilino</th>
+                        <th>F_entrada</th>
+                        <th>H_reserva</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody style="color: white;">
+                    {% for reserva in reservas %}
+                    <tr>
+                        <td>{{ reserva.id }}</td>
+                        <td>{{ reserva.restaurante.nombre }}</td>
+                        <td>{{ reserva.inquilino.user.username }}</td>
+                        <td>{{ reserva.fecha_reserva }}</td>
+                        <td>{{ reserva.hora_reserva}}</td>
+                        <td>
+                            <a href="{% url 'update_object' reserva.id 'reserva_restaurante' %}" class="btn btn-sm btn-warning">Editar</a>
+                            <a href="{% url 'delete_object' reserva.id 'reserva_restaurante' %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="pasadas">
+
+            <table class="table table-bordered">
+                <thead style="color: white;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Restaurante</th>
+                        <th>Inquilino</th>
+                        <th>F_entrada</th>
+                        <th>H_reserva</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody style="color: white;">
+                    {% for reserva in reservas_pasadas %}
+                    <tr>
+                        <td>{{ reserva.id }}</td>
+                        <td>{{ reserva.restaurante.nombre }}</td>
+                        <td>{{ reserva.inquilino.user.username }}</td>
+                        <td>{{ reserva.fecha_reserva }}</td>
+                        <td>{{ reserva.hora_reserva}}</td>
+                        <td>
+                            <a href="{% url 'update_object' reserva.id 'reserva_restaurante' %}" class="btn btn-sm btn-warning">Editar</a>
+                            <a href="{% url 'delete_object' reserva.id 'reserva_restaurante' %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+
+
+
+
+    </div>
     <a href="{% url 'admin_panel' %}" class="btn btn-secondary mt-3">Volver</a>
 </div>
+
 {% endblock %}

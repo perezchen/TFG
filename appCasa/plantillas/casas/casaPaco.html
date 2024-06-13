@@ -62,85 +62,92 @@
 
   <form class="form_reserve" action="{% url 'reserve' casa.id %}" method="post">
     {% csrf_token %}
-    <div class="container">
-      <div class="inputs-dates">
-        <div>
-          <label for="fecha_entrada" class="form-label">Fecha de entrada:</label>
-          <input type="text" id="fecha_entrada" name="fecha_entrada" class="form-control" placeholder="Selecciona una fecha">
-        </div>
-    
-        <div style="margin-bottom: 20px;">
-          <label for="fecha_salida" class="form-label">Fecha de salida:</label>
-          <input type="text" id="fecha_salida" name="fecha_salida" class="form-control" placeholder="Selecciona una fecha">
-        </div>
+    <div class="inputs-dates">
+      <div>
+        <label for="fecha_entrada">Fecha de entrada:</label>
+        <input placeholder="Selecciona una fecha" type="text" id="fecha_entrada"
+          name="fecha_entrada">
       </div>
-    
-      <!-- Rangos de inquilinos y menores -->
-      <div class="slider-labels">
-        <div>
-          <label for="rangeInquilinos" class="form-label">Nº inquilinos</label>
-          <input type="range" class="form-range" id="rangeInquilinos" min="0" max="{{ casa.max_inquilinos }}" step="1">
-          <span id="rangeValueInquilinos"></span>
-        </div>
-        <div>
-          <label for="rangeMenores" class="form-label">Nº menores 15</label>
-          <input type="range" class="form-range" id="rangeMenores" min="0" max="5" step="1">
-          <span id="rangeValueMenores"></span>
-        </div>
+
+      <div style="margin-bottom: 20px;">
+        <label for="fecha_salida">Fecha de salida:</label>
+        <input placeholder="Selecciona una fecha" type="text" id="fecha_salida"
+          name="fecha_salida">
       </div>
-    
-      <!-- Precios -->
-      <div class="price-inputs">
-        <div class="price-field">
-          <label for="precio_noche_persona" class="form-label">Precio por persona/noche:</label>
-          <input type="text" id="precio_noche_persona" name="precio_noche_persona" value="{{ casa.precio_noche_persona }}" class="form-control">
-        </div>
-        <div class="price-field">
-          <label for="precio_total" class="form-label">Precio total:</label>
-          <input type="text" id="precio_total" name="precio_total" class="form-control">
-        </div>
-      </div>
-    
-      <div class="btn_reserve">
-        <button type="submit" class="btn btn-info">
-          <i class="bi bi-journal-bookmark-fill" style="padding: 5px"></i>Reservar
-        </button>
-      </div>
-    </form>
     </div>
-    
+
+
+    <!-- Número de inquilinos -->
+    <div class="range-class-div">
+
+      <label style="color: white;" for="rangeInquilinos" class="form-label">Nº inquilinos</label>
+      <input style="color: wheat;" type="range" class="form-range" min="0" max="{{ casa.max_inquilinos }}"
+        step="1" id="rangeInquilinos">
+      <span style="color: white;" id="rangeValueInquilinos"></span>
+      <input type="hidden" id="rangeValueInputInquilinos" name="num_inquilinos">
+    </div>
+   <br>
+   <div class="range-class-div">
+     <!-- Número de menores de 15 años -->
+     <label style="color: white;" for="rangeMenores" class="form-label">Nº menores 15</label>
+     <input style="color: wheat;" type="range" class="form-range" min="0" max="5"
+       step="1" id="rangeMenores">
+     <span style="color: white;" id="rangeValueMenores"></span>
+     <input type="hidden" id="rangeValueInputMenores" name="num_menores">
+
+   </div>
+<br>
+<br>
+
+<div class="div-precios">
+  <div>
+    <label for="precio_noche_persona">Precio persona/noche:</label>
+    <div id="precio_noche_persona" data-precio="{{ casa.precio_noche_persona }}">{{ casa.precio_noche_persona }}</div>
+  </div>
+  <div>
+    <label for="precio_total">Precio total:</label>
+    <div id="precio_total"></div>
+  </div>
+</div>
+
+
+    <div class="btn_reserve">
+      <button id="btn-reserve" type="submit" class="btn btn-info">
+        <i style="padding: 5px" class="bi bi-journal-bookmark-fill"></i>Reservar
+      </button>
+    </div>
+  </form>
+</div>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-      const numInquilinos = document.getElementById('rangeInquilinos');
-      const fechaEntrada = document.getElementById('fecha_entrada');
-      const fechaSalida = document.getElementById('fecha_salida');
-      const precioNoche = document.getElementById('precio_noche_persona');
-      const precioTotal = document.getElementById('precio_total');
+    const numInquilinos = document.getElementById('rangeInquilinos');
+    const fechaEntrada = document.getElementById('fecha_entrada');
+    const fechaSalida = document.getElementById('fecha_salida');
+    const precioNoche = document.getElementById('precio_noche_persona').dataset.precio;
+    const precioTotal = document.getElementById('precio_total');
 
+    function calcularPrecioTotal() {
+      if (fechaEntrada.value && fechaSalida.value && numInquilinos.value && precioNoche) {
+        const startDate = new Date(fechaEntrada.value);
+        const endDate = new Date(fechaSalida.value);
 
-  
-      function calcularPrecioTotal() {
-        if (fechaEntrada.value && fechaSalida.value && numInquilinos.value && precioNoche.value) {
-            const startDate = new Date(fechaEntrada.value);
-            const endDate = new Date(fechaSalida.value);
+        const diffTime = Math.abs(endDate - startDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diferencia en días
 
-            const diffTime = Math.abs(endDate - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diferencia en días
+        const total = diffDays * numInquilinos.value * parseFloat(precioNoche);
+        precioTotal.textContent = total.toFixed(2); // Asumiendo que quieres dos decimales
 
-            const total = diffDays * numInquilinos.value * parseFloat(precioNoche.value);
-            precioTotal.value = total.toFixed(2); // Asumiendo que quieres dos decimales
-
-        } else {
-            precioTotal.value = ''; // Limpiar si alguna entrada está incompleta
-        }
+      } else {
+        precioTotal.textContent = ''; // Limpiar si alguna entrada está incompleta
+      }
     }
 
-      // Escuchar cambios en los elementos relevantes
-      numInquilinos.addEventListener('input', calcularPrecioTotal);
-      fechaEntrada.addEventListener('change', calcularPrecioTotal);
-      fechaSalida.addEventListener('change', calcularPrecioTotal);
+    // Escuchar cambios en los elementos relevantes
+    numInquilinos.addEventListener('input', calcularPrecioTotal);
+    fechaEntrada.addEventListener('change', calcularPrecioTotal);
+    fechaSalida.addEventListener('change', calcularPrecioTotal);
   });
-  </script>
+</script>
 
 
 <script>

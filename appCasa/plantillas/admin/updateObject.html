@@ -156,6 +156,18 @@
             <input type="text" class="form-control" id="precio_medio" name="precio_medio" value="{{ object.precio_medio }}" required>
         </div>
 
+        <div class="mb-3">
+            <label for="max_reservas_dia" class="form-label">Máximo de Reservas por Día</label>
+            <input type="number" class="form-control" id="max_reservas_dia" name="max_reservas_dia"
+            value="{{ object.max_reservas_dia }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="max_personas_reserva" class="form-label">Máximo de Personas por Reserva</label>
+            <input type="number" class="form-control" id="max_personas_reserva" name="max_personas_reserva"
+            value="{{ object.max_personas_reserva }}" required>
+        </div>
+
         <!-- Campo para la URL de la imagen -->
         <div class="mb-3">
             <label for="img_url" class="form-label">URL de la Imagen</label>
@@ -218,6 +230,53 @@
                 <option value="False" {% if not object.cancelada %}selected{% endif %}>No</option>
                 <option value="True" {% if object.cancelada %}selected{% endif %}>Sí</option>
             </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+
+{% elif tipo_objeto == 'reserva_restaurante' %}
+<div class="container">
+    <h1>Editar Reserva de Restaurante</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo_objeto" value="reserva_restaurante">
+
+        <!-- Campo para la fecha de la reserva -->
+        <div class="mb-3">
+            <label for="fecha_reserva" class="form-label">Fecha de Reserva</label>
+            <input type="date" class="form-control" id="fecha_reserva"
+                name="fecha_reserva" value="{{ object.fecha_reserva|date:"Y-m-d" }}">
+        </div>
+
+        <!-- Campo para la hora de la reserva -->
+        <div class="mb-3">
+            <label for="hora_reserva" class="form-label">Hora de Reserva</label>
+            <input type="time" class="form-control" id="hora_reserva"
+                name="hora_reserva" value="{{ object.hora_reserva|time:"H:i" }}">
+        </div>
+
+        <!-- Campo para el número de comensales -->
+        <div class="mb-3">
+            <label for="num_comensales" class="form-label">Número de Comensales</label>
+            <input type="number" class="form-control" id="num_comensales"
+                name="num_comensales" value="{{ object.num_comensales }}">
+        </div>
+
+        <!-- Campo para el turno -->
+        <div class="mb-3">
+            <label for="turno" class="form-label">Turno</label>
+            <select class="form-control" id="turno" name="turno">
+                <option value="tarde" {% if object.turno == 'tarde' %}selected{% endif %}>Tarde</option>
+                <option value="noche" {% if object.turno == 'noche' %}selected{% endif %}>Noche</option>
+            </select>
+        </div>
+
+        <!-- Campo para las notas -->
+        <div class="mb-3">
+            <label for="nota" class="form-label">Notas Adicionales</label>
+            <textarea class="form-control" id="nota" name="nota">{{ object.nota }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar</button>

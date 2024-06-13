@@ -50,6 +50,8 @@ class Restaurante(models.Model):
     direccion = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
     precio_medio = models.DecimalField(max_digits=10, decimal_places=2)
+    max_reservas_dia = models.IntegerField(default=5)
+    max_personas_reserva = models.IntegerField(default=10)
     img_url = models.CharField(max_length=255, default="house.avif")
     url_name = models.CharField(max_length=255, default="index")
 
@@ -61,8 +63,12 @@ class Reserva_restaurante(models.Model):
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE, default="1")
     fecha_reserva = models.DateField()
     hora_reserva = models.TimeField()
-    num_comensales = models.IntegerField(default=11)
-
+    num_comensales = models.IntegerField(default=1)
+    turno = models.CharField(max_length=255, default="tarde")
+    hora_reserva = models.TimeField()
+    num_personas = models.IntegerField(default=1)
+    nota = models.CharField(max_length=255, default="")
+    
     def __str__(self):
         return f'Reserva para {self.inquilino} el {self.fecha_reserva} a las {self.hora_reserva}'
     

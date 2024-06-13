@@ -36,10 +36,9 @@
             </div>
             <div class="div-contactar-admin">
                 <p style="color:whitesmoke; margin-top: 50px">Si desea hacer alguna modificación, por favor, contacte con el administrador</p>
-                <a title="Contactar con el adminitrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
+                <a id="contactBtn_perfil" data-context="cambios_perfil" title="Contactar con el administrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
             </div>
         </div>
-
 
         <div class="tab-pane fade" id="reservasCasas">
             <div class="card">
@@ -54,7 +53,7 @@
             </div>
             <div class="div-contactar-admin">
                 <p style="color:whitesmoke; margin-top: 50px">Si desea hacer alguna modificación, por favor, contacte con el administrador</p>
-                <a title="Contactar con el adminitrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
+                <a id="contactBtn_reserva" data-context="cambios_reserva_casa" title="Contactar con el administrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
             </div>
         </div>
 
@@ -71,10 +70,23 @@
             </div>
             <div class="div-contactar-admin">
                 <p style="color:whitesmoke; margin-top: 50px">Si desea hacer alguna modificación, por favor, contacte con el administrador</p>
-                <a title="Contactar con el adminitrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
+                <a id="contactBtn_reserva_restaurante" data-context="cambios_reserva_restaurante" title="Contactar con el administrador" class="btn btn-info" href="{% url 'contact' %}">Modificar</a>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-info').forEach(button => {
+            button.addEventListener('click', function() {
+                const context = this.getAttribute('data-context');
+                localStorage.setItem('contactContext', context);
+            });
+        });
+    });
+</script>
+
 
 {% endblock %}

@@ -1,3 +1,5 @@
+import datetime
+from itertools import count
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Casa, Conversacion, Inquilino, Mensaje, Reserva, Reserva_restaurante, Restaurante
@@ -8,6 +10,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Count
 
 
 def register_view(request):
@@ -211,8 +214,14 @@ def api_reservas(request, casa_id):
 
 # Vistas Restaurantes
 @login_required
-def restaurant_view(request):
-    return render(request, 'bares/restaurant.html')
+def restaurantes_panel(request):
+    restaurantes = Restaurante.objects.all()
+    
+    return render(request, 'bares/restaurantesPanel.html', {'restaurantes': restaurantes})
+
+# @login_required
+# def restaurant_view(request):
+#     return render(request, 'bares/restaurant.html')
 
 
 @login_required
@@ -230,48 +239,65 @@ def bar_loscanillas_view(request):
 
 
 @login_required
-def api_restaurante(request, restaurante_licencia):
-    restaurante = get_object_or_404(
-        Restaurante, numero_licencia=restaurante_licencia)
-    inquilino = request.user.extra_fields
+def api_restaurante(request, restaurante_licencia, turno):
+    restaurante = get_object_or_404(Restaurante, numero_licencia=restaurante_licencia)
     reservas = Reserva_restaurante.objects.filter(
-        restaurante=restaurante, inquilino=inquilino)
+        restaurante=restaurante,
+        fecha_reserva__gte=datetime.date.today(),
+        turno=turno
+    ).values('fecha_reserva').annotate(count=Count('id'))
+    
+    max_reservas = restaurante.max_reservas_dia
     data = [{
-        'title': 'Reservado',
-        'start': reserva.fecha_reserva.strftime('%Y-%m-%d'),
+        'date': reserva['fecha_reserva'].strftime('%Y-%m-%d'),
+        'count': reserva['count'],
+        'max_reservas': max_reservas
     } for reserva in reservas]
 
-    print(data)
     return JsonResponse(data, safe=False)
+
 
 
 @login_required
 def reserva_restaurante(request, restaurante_licencia):
     if request.method == 'POST':
-        # Coger valores con http de la página web
-        fecha_reserva = request.POST.get('fecha_reserva')
-        hora_reserva = request.POST.get('hora_reserva')
-        num_comensales = request.POST.get('rangeValue')
-        num_comensales = int(num_comensales)  # Convertimos a int la cadena
+        restaurante = get_object_or_404(Restaurante, numero_licencia=restaurante_licencia)
+        fecha_reserva_tarde = request.POST.get('fecha_reserva_tarde')
+        fecha_reserva_noche = request.POST.get('fecha_reserva_noche')
+        num_comensales = request.POST.get('num_comensales')
+        hora_reserva_tarde = request.POST.get('hora_reserva_tarde')
+        hora_reserva_noche = request.POST.get('hora_reserva_noche')
+        
+        if hora_reserva_tarde:
+            hora_reserva = hora_reserva_tarde
+        else:
+            hora_reserva = hora_reserva_noche
 
-        restaurante = get_object_or_404(
-            Restaurante, numero_licencia=restaurante_licencia)
+        if fecha_reserva_tarde:
+            turno = 'tarde'
+            fecha_reserva = fecha_reserva_tarde
+        elif fecha_reserva_noche:
+            turno = 'noche'
+            fecha_reserva = fecha_reserva_noche
+        else:
+            return HttpResponse('Seleccione una fecha válida.', status=400)
+        
+        if Reserva_restaurante.objects.filter(restaurante=restaurante, fecha_reserva=fecha_reserva, turno=turno).count() < restaurante.max_reservas_dia:
+            Reserva_restaurante.objects.create(
+                inquilino=request.user.extra_fields,
+                restaurante=restaurante,
+                fecha_reserva=fecha_reserva,
+                turno=turno,
+                hora_reserva = hora_reserva,
+                num_comensales=num_comensales
+            )
+            return redirect('success')
+        else:
+            return HttpResponse('No hay disponibilidad para esa fecha y turno.', status=400)
 
-        # Obtener el inquilino desde el usuario actual
-        inquilino = get_object_or_404(Inquilino, user=request.user)
+    return HttpResponse('Método no permitido', status=405)
 
-        # Crear la reserva
-        Reserva_restaurante.objects.create(
-            inquilino=inquilino,
-            restaurante=restaurante,
-            fecha_reserva=fecha_reserva,
-            hora_reserva=hora_reserva
-        )
 
-        print(
-            f"Fecha entrada: {fecha_reserva}\n Hora reserva: {hora_reserva} \n Num Comensales: {num_comensales} ")
-
-        return redirect('success')
 
 
 # vista administrador
@@ -359,8 +385,29 @@ def admin_reservas_view(request):
 
 @user_passes_test(check_is_superuser)
 def admin_reservas_restaurantes_view(request):
+    restaurante_id = request.GET.get('restaurante_id')
+    inquilino_id = request.GET.get('inquilino_id')
+
     reservas = Reserva_restaurante.objects.all()
-    return render(request, 'admin/adminReservasRestaurantes.html', {'reservas': reservas})
+    
+    base_query = Reserva_restaurante.objects.all()
+    
+    if restaurante_id:
+        reservas = base_query.filter(restaurante__id = restaurante_id)
+    if inquilino_id:
+        reservas = base_query.filter(inquilino__id = inquilino_id)
+    
+    reservas_pasadas = base_query.filter(fecha_reserva__lt=timezone.now())
+    
+    return render(request, 'admin/adminReservasRestaurantes.html', {
+        'reservas': reservas,
+        'reservas_pasadas': reservas_pasadas,
+        'inquilinos': Inquilino.objects.all(),
+        'restaurantes': Restaurante.objects.all(),
+        'inquilino_id': inquilino_id,
+        'restaurante_id': restaurante_id,
+        
+        })
 
 # Vista CUD
 
@@ -368,6 +415,7 @@ def admin_reservas_restaurantes_view(request):
 @user_passes_test(check_is_superuser)
 def create_object_view(request, tipo_objeto):
     casas = Casa.objects.all()
+    restaurantes = Restaurante.objects.all()
     inquilinos = Inquilino.objects.all()
 
     if request.method == 'POST':
@@ -424,12 +472,24 @@ def create_object_view(request, tipo_objeto):
             direccion = request.POST['direccion']
             descripcion = request.POST['descripcion']
             precio_medio = request.POST['precio_medio']
+            max_reservas_dia = request.POST['max_reservas_dia']
+            max_personas_reserva = request.POST['max_personas_reserva']
             img_url = request.POST.get('img_url')
             url_name = request.POST.get('url_name')
-            Restaurante.objects.create(numero_licencia=numero_licencia, nombre=nombre,
-                                       direccion=direccion, descripcion=descripcion, precio_medio=precio_medio,
-                                       img_url=img_url, url_name=url_name)
+
+            Restaurante.objects.create(
+                numero_licencia=numero_licencia,
+                nombre=nombre,
+                direccion=direccion,
+                descripcion=descripcion,
+                precio_medio=precio_medio,
+                max_reservas_dia=max_reservas_dia,
+                max_personas_reserva=max_personas_reserva,
+                img_url=img_url,
+                url_name=url_name
+            )
             return redirect('admin_restaurantes')
+
 
         elif tipo_objeto == 'reserva':
             casa_id = request.POST.get('casa')
@@ -465,7 +525,25 @@ def create_object_view(request, tipo_objeto):
             reserva = Reserva.objects.create(**reserva_data)
             return redirect('admin_reservas')
         
-    return render(request, 'admin/createObject.html', {'tipo_objeto': tipo_objeto, 'casas': casas, 'inquilinos': inquilinos})
+        elif tipo_objeto == 'reserva_restaurante':
+            restaurante = get_object_or_404(Restaurante, id=request.POST.get('restaurante'))
+            inquilino = get_object_or_404(Inquilino, id=request.POST.get('inquilino'))
+            fecha_reserva = request.POST.get('fecha_reserva')
+            hora_reserva = request.POST.get('hora_reserva')
+            num_comensales = request.POST.get('num_comensales')
+            turno = request.POST.get('turno')
+            nota = request.POST.get('nota')
+            
+            Reserva_restaurante.objects.create(restaurante=restaurante, 
+                                                inquilino=inquilino,
+                                                fecha_reserva=fecha_reserva, 
+                                                num_comensales=num_comensales, 
+                                                turno=turno, 
+                                                hora_reserva=hora_reserva,
+                                                nota=nota)
+            return redirect('admin_reservas_restaurantes')
+        
+    return render(request, 'admin/createObject.html', {'tipo_objeto': tipo_objeto, 'casas': casas, 'inquilinos': inquilinos, 'restaurantes': restaurantes})
 
 
 @user_passes_test(check_is_superuser)
@@ -475,7 +553,8 @@ def update_object_view(request, tipo_objeto, object_id):
         'casa': Casa,
         'inquilino': Inquilino,
         'restaurante': Restaurante,
-        'reserva': Reserva
+        'reserva': Reserva,
+        'reserva_restaurante': Reserva_restaurante
         
     }
     # Obtener el modelo correcto para el tipo de objeto
@@ -533,6 +612,8 @@ def update_object_view(request, tipo_objeto, object_id):
             restaurante.direccion = request.POST.get('direccion')
             restaurante.descripcion = request.POST.get('descripcion')
             restaurante.precio_medio = request.POST.get('precio_medio')
+            restaurante.max_reservas_dia = request.POST.get('max_reservas_dia')
+            restaurante.max_personas_reserva = request.POST.get('max_personas_reserva')
             restaurante.img_url = request.POST.get('img_url')
             restaurante.url_name = request.POST.get('url_name')
             restaurante.save()
@@ -550,6 +631,17 @@ def update_object_view(request, tipo_objeto, object_id):
             reserva.cancelada = request.POST.get('cancelada')
             reserva.save()
             return redirect('admin_reservas')
+        
+        elif tipo_objeto == 'reserva_restaurante':
+            reserva_restaurante = get_object_or_404(Reserva_restaurante, id=object_id)
+            if request.method == 'POST':
+                reserva_restaurante.fecha_reserva = request.POST.get('fecha_reserva')
+                reserva_restaurante.hora_reserva = request.POST.get('hora_reserva')
+                reserva_restaurante.num_comensales = request.POST.get('num_comensales')
+                reserva_restaurante.turno = request.POST.get('turno')
+                reserva_restaurante.nota = request.POST.get('nota')
+                reserva_restaurante.save()
+            return redirect('admin_reservas_restaurantes')
 
     return render(request, 'admin/updateObject.html', {'object': object, 'tipo_objeto': tipo_objeto})
 
@@ -561,7 +653,8 @@ def delete_object_view(request, tipo_objeto, object_id):
         'casa': Casa,
         'inquilino': Inquilino,
         'restaurante': Restaurante,
-        'reserva': Reserva
+        'reserva': Reserva,
+        'reserva_restaurante': Reserva_restaurante
     }
     # Obtener el modelo correcto para el tipo de objeto
     if tipo_objeto in models:
@@ -602,6 +695,12 @@ def delete_object_view(request, tipo_objeto, object_id):
             reserva.cancelada = True
             reserva.save()
             return redirect('admin_reservas')
+        
+        elif tipo_objeto == 'reserva_restaurante':
+            reserva_restaurante = get_object_or_404(Reserva_restaurante, id=object_id)
+            reserva_restaurante.delete()
+            return redirect('admin_reservas_restaurantes')
+        
         
     return render(request, 'admin/deleteObject.html', {'object': object, 'tipo_objeto': tipo_objeto})
 

@@ -39,4 +39,19 @@
         <a href="{% url 'lista_conversaciones' %}" class="btn btn-primary">Lista de Conversaciones</a>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const context = localStorage.getItem('contactContext');
+        const asuntoField = document.getElementById('asunto');
+  
+        if (context === 'cambios_perfil') {
+            asuntoField.value = 'Hola, me gustaría hacer cambios en mi perfil.';
+        } else if (context === 'cambios_reserva_casa') {
+            asuntoField.value = 'Hola, me gustaría hacer cambios en mi reserva de casa.';
+        } else if (context === 'cambios_reserva_restaurante') {
+            asuntoField.value = 'Hola, me gustaría hacer cambios en mi reserva de restaurante.';
+        }
+    });
+  </script>
 {% endblock %}

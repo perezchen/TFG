@@ -36,22 +36,8 @@
                         <a style="color: white;" class="nav-link" href="{% url 'index' %}" title="Página de inicio">Inicio</a>
                         <a style="color: white;" class="nav-link" href="#" title="Ver galería de imágenes">Galería</a>
                         <a style="color: white;" class="nav-link" href="{% url 'casas_panel' %}" title="Explorar casas disponibles">Casas</a>
-                        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-                            <ul class="navbar-nav">
-                                <li class="nav-item dropdown">
-                                    <a class="btn btn-dark dropdown-toggle"
-                                       data-bs-toggle="dropdown"
-                                       aria-expanded="false"
-                                       title="Ver restaurantes disponibles">
-                                       Restaurantes
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-dark">
-                                        <li><a class="dropdown-item" href="{% url 'barPaco' %}" title="Bar Paco">Bar Paco</a></li>
-                                        <li><a class="dropdown-item" href="{% url 'barLoscanillas' %}" title="Los Canillas">Los Canillas</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
+                        <a style="color: white;" class="nav-link" href="{% url 'restaurantes_panel' %}" title="Explorar restaurantes disponibles">Restaurantes</a>
+
                         
                         <a style="color: white;" class="nav-link" href="{% url 'crear_conversacion' %}" title="Contactar con nosotros">Contacto</a>
                         <!-- Botón solo para superusuarios -->
