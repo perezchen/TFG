@@ -2,7 +2,12 @@
     /* Estilos que solo se aplicarán cuando el ancho de la pantalla sea de 768px o menos */
     .calendar-container {
         padding: 5px;
-        height: auto; /* Ajusta la altura para dispositivos móviles */
+        height: 100vh !important; /* Ajusta la altura para dispositivos móviles */
+
+    }
+
+    .div-precios {
+        flex-direction: column;
     }
 
     .range-class-div {

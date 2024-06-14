@@ -5,6 +5,11 @@
         height: auto; /* Ajusta la altura para dispositivos móviles */
     }
 
+    .div-precios {
+        flex-direction: column;
+    }
+
+    
     .inputs-dates {
         display: flex; /* Asegura que el contenedor use flexbox */
         flex-direction: column; /* Alinea los elementos en columna */

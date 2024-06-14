@@ -3,7 +3,7 @@
 
 {% load static %}
 
-{% block title %}Payment{% endblock %}
+{% block title %}Lista Conversaciones{% endblock %}
 
 {% block extra_links %}
 
@@ -26,7 +26,7 @@
             <tr>
                 <td>{{ conversacion.asunto }}</td>
                 <td>
-                    <a href="{% url 'ver_conversacion' conversacion.id %}" class="btn btn-light">Ver Mensajes</a>
+                    <a href="{% url 'ver_conversacion' conversacion.id %}" class="btn btn-light" title="Ver todos los mensajes de la conversación">Ver Mensajes</a>
                 </td>
             </tr>
             {% endfor %}

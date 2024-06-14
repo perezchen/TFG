@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Galería{% endblock %}
+
+{% block extra_links %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'appCasa/css/galeria.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Galería de Propiedades y Restaurantes</h1>
+    <div class="row">
+        {% for casa in casas %}
+        <div class="col-md-3">
+            <div class="card mb-4 shadow-sm">
+                <a href="{% url casa.url_name %}">
+                    <img src="{% static 'appCasa/images/'|add:casa.img_url %}" class="card-img-top" alt="{{ restaurante.nombre }}">
+                </a>
+                <div class="card-body">
+                    <p  style="color: black;" class="card-text">{{ casa.nombre }}</p>
+                    <!-- More details link or button can be added here -->
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay casas disponibles.</p>
+        {% endfor %}
+        {% for restaurante in restaurantes %}
+        <div class="col-md-3">
+            <div class="card mb-4 shadow-sm">
+                <a href="{% url restaurante.url_name %}">
+                    <img src="{% static 'appCasa/images/'|add:restaurante.img_url %}" class="card-img-top" alt="{{ restaurante.nombre }}">
+                </a>
+                <div class="card-body">
+                    <p style="color: black;" class="card-text">{{ restaurante.nombre }}</p>
+                    <!-- More details link or button can be added here -->
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No hay restaurantes disponibles.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -10,6 +10,7 @@ urlpatterns = [
     path('success/', views.success_view, name='success'),
     path('error/', views.error_view, name='error'),
     path('payment/', views.payment_view, name='payment'),
+    path('galeria/', views.galeria, name='galeria'),
     
     # casas
     path('api_reservas/<int:casa_id>/', views.api_reservas, name='api_reservas'),

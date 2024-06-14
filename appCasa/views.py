@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from itertools import count
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +13,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
 
+# supongamos que cursor es la variable que contiene la conexion
 
 def register_view(request):
     if request.method == 'POST':
@@ -22,7 +24,9 @@ def register_view(request):
         address = request.POST['address']
         user = User.objects.create_user(
             username=username, email=email, password=password)
+        # cursor.execute("INSERT INTO User (username, email, password) VALUES (%s, %s, %s)", (username, email, password))
         Inquilino.objects.create(user=user, dni=dni, address=address)
+        # cursor.execute("INSERT INTO Inquilino (user_id, dni, address) VALUES (%s, %s, %s)", (user_id, dni, address))
         return redirect('login')
 
 
@@ -95,6 +99,13 @@ def logOut_view(request):
 
 #         return redirect('success')
 
+
+def galeria(request):
+    casas = Casa.objects.all()
+    restaurantes = Restaurante.objects.all()
+    
+    return render(request, 'galeria.html', {'casas': casas, 'restaurantes': restaurantes})
+
 @login_required
 def payment_view(request):
     if request.method == 'POST':
@@ -129,14 +140,17 @@ def reserve_view(request, casa_id):
         fecha_salida = request.POST.get('fecha_salida')
         num_inquilinos = request.POST.get('num_inquilinos')
         num_menores = request.POST.get('num_menores')
-            
+        precio_total = request.POST.get('precio_total_input')
+        print(precio_total)
         
         if reserva_disponible(casa_id, fecha_entrada, fecha_salida):
             request.session['reservation_data'] = {
                 'fecha_entrada': fecha_entrada,
                 'fecha_salida': fecha_salida,
                 'num_inquilinos': num_inquilinos,
-                'casa_id': casa_id
+                'casa_id': casa_id,
+                'num_menores': num_menores,
+                'precio_total': precio_total,
             }
             return render(request, 'payment.html')
 
@@ -154,8 +168,14 @@ def reserve_view(request, casa_id):
                 fecha_entrada=reservation_data['fecha_entrada'],
                 fecha_salida=reservation_data['fecha_salida'],
                 num_inquilinos=int(reservation_data['num_inquilinos']),
-                precio_total=int(reservation_data['num_inquilinos']) * 50
+                num_menores=int(reservation_data['num_menores']),
+                
+                precio_total=Decimal(reservation_data['precio_total'])
             )
+            # cursor.execute(
+            # "INSERT INTO Reserva (casa_id, inquilino_id, fecha_entrada, fecha_salida, num_inquilinos, num_menores, precio_total) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            # (casa_reserva_id, inquilino_id, fecha_entrada, fecha_salida, num_inquilinos, num_menores, precio_total)
+            # )
         except Exception as e:
             messages.error(request, f"Error al crear la reserva: {e}")
             return render(request, 'error.html')
@@ -267,17 +287,15 @@ def reserva_restaurante(request, restaurante_licencia):
         num_comensales = request.POST.get('num_comensales')
         hora_reserva_tarde = request.POST.get('hora_reserva_tarde')
         hora_reserva_noche = request.POST.get('hora_reserva_noche')
+        nota = request.POST.get('nota')
         
-        if hora_reserva_tarde:
-            hora_reserva = hora_reserva_tarde
-        else:
-            hora_reserva = hora_reserva_noche
-
         if fecha_reserva_tarde:
-            turno = 'tarde'
+            turno = 'tarde'            
+            hora_reserva = hora_reserva_tarde
             fecha_reserva = fecha_reserva_tarde
         elif fecha_reserva_noche:
             turno = 'noche'
+            hora_reserva = hora_reserva_noche
             fecha_reserva = fecha_reserva_noche
         else:
             return HttpResponse('Seleccione una fecha válida.', status=400)
@@ -289,8 +307,13 @@ def reserva_restaurante(request, restaurante_licencia):
                 fecha_reserva=fecha_reserva,
                 turno=turno,
                 hora_reserva = hora_reserva,
-                num_comensales=num_comensales
+                num_comensales=num_comensales,
+                nota=nota
             )
+            # cursor.execute(
+            # "INSERT INTO Reserva_restaurante (inquilino_id, restaurante_id, fecha_reserva, turno, hora_reserva, num_comensales, nota) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            # (inquilino_id, restaurante_id, fecha_reserva, turno, hora_reserva, num_comensales, nota)
+            # )
             return redirect('success')
         else:
             return HttpResponse('No hay disponibilidad para esa fecha y turno.', status=400)
@@ -409,8 +432,7 @@ def admin_reservas_restaurantes_view(request):
         
         })
 
-# Vista CUD
-
+# Vista CRUD
 
 @user_passes_test(check_is_superuser)
 def create_object_view(request, tipo_objeto):

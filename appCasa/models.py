@@ -90,33 +90,3 @@ class Mensaje(models.Model):
     def __str__(self):
         return f"{self.autor.username}: {self.texto[:50]}..."  # Muestra una vista previa del mensaje
     
-    
-    
-    
-
-
-
-
-
-
-
-
-class Contrato(models.Model):
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
-    documento_pdf = models.BinaryField()
-
-class Pago(models.Model):
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
-    monto = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_pago = models.DateField()
-    metodo_pago = models.CharField(max_length=255)
-
-
-
-class Evaluacion(models.Model):
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
-    calificacion = models.IntegerField(null=True, blank=True)
-    comentario = models.TextField(blank=True, null=True)
-    fecha_evaluacion = models.DateField(null=True, blank=True)

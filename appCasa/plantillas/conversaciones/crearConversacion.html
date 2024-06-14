@@ -35,8 +35,8 @@
             </select>
         </div>
         {% endif %}
-        <button type="submit" class="btn btn-primary">Crear Conversación</button>
-        <a href="{% url 'lista_conversaciones' %}" class="btn btn-primary">Lista de Conversaciones</a>
+        <button type="submit" class="btn btn-primary" title="Crear la conversación">Crear Conversación</button>
+        <a href="{% url 'lista_conversaciones' %}" class="btn btn-primary" title="Listar todas tus conversaciones">Lista de Conversaciones</a>
     </form>
 </div>
 
@@ -44,14 +44,24 @@
     document.addEventListener('DOMContentLoaded', function() {
         const context = localStorage.getItem('contactContext');
         const asuntoField = document.getElementById('asunto');
-  
-        if (context === 'cambios_perfil') {
-            asuntoField.value = 'Hola, me gustaría hacer cambios en mi perfil.';
-        } else if (context === 'cambios_reserva_casa') {
-            asuntoField.value = 'Hola, me gustaría hacer cambios en mi reserva de casa.';
-        } else if (context === 'cambios_reserva_restaurante') {
-            asuntoField.value = 'Hola, me gustaría hacer cambios en mi reserva de restaurante.';
+    
+        // Asigna un mensaje predeterminado basado en el contexto almacenado
+        switch (context) {
+            case 'cambios_perfil':
+                asuntoField.value = 'Hola, me gustaría hacer cambios en mi perfil.';
+                break;
+            case 'cambios_reserva_casa':
+                asuntoField.value = 'Hola, me gustaría hacer cambios en mi reserva de casa.';
+                break;
+            case 'cambios_reserva_restaurante':
+                asuntoField.value = 'Hola, me gustaría hacer cambios en mi reserva de restaurante.';
+                break;
+            default:
+                asuntoField.value = '';  // Limpia el campo asunto si no hay contexto específico
         }
+    
+        // Limpia el localStorage después de usar el contexto
+        localStorage.removeItem('contactContext');
     });
-  </script>
+    </script>
 {% endblock %}

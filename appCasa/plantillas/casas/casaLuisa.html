@@ -3,11 +3,11 @@
 
 {% load static %}
 
-{% block title %}Admin Panel{% endblock %}
+{% block title %}{{ casa.nombre }}{% endblock %}
 
 {% block extra_links %}
 
-<link rel="stylesheet" href="{% static 'appCasa/css/casas/casaLuisa.css' %}">
+<link rel="stylesheet" href="{% static 'appCasa/css/casas/casaRio.css' %}">
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -40,15 +40,13 @@
           class="d-block w-100" alt="...">
       </div>
     </div>
-    <button class="carousel-control-prev" type="button"
-      data-bs-target="#carousel-casa" data-bs-slide="prev">
+    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-casa" data-bs-slide="prev" title="Anterior">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
+      <span class="visually-hidden">Anterior</span>
     </button>
-    <button class="carousel-control-next" type="button"
-      data-bs-target="#carousel-casa" data-bs-slide="next">
+    <button class="carousel-control-next" type="button" data-bs-target="#carousel-casa" data-bs-slide="next" title="Siguiente">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
+      <span class="visually-hidden">Siguiente</span>
     </button>
   </div>
 
@@ -66,13 +64,13 @@
       <div>
         <label for="fecha_entrada">Fecha de entrada:</label>
         <input placeholder="Selecciona una fecha" type="text" id="fecha_entrada"
-          name="fecha_entrada">
+          name="fecha_entrada" title="Seleccionar fecha de entrada">
       </div>
 
       <div style="margin-bottom: 20px;">
         <label for="fecha_salida">Fecha de salida:</label>
         <input placeholder="Selecciona una fecha" type="text" id="fecha_salida"
-          name="fecha_salida">
+          name="fecha_salida" title="Seleccionar fecha de salida">
       </div>
     </div>
 
@@ -82,7 +80,7 @@
 
       <label style="color: white;" for="rangeInquilinos" class="form-label">Nº inquilinos</label>
       <input style="color: wheat;" type="range" class="form-range" min="0" max="{{ casa.max_inquilinos }}"
-        step="1" id="rangeInquilinos">
+        step="1" id="rangeInquilinos" title="Seleccionar número de inquilinos">
       <span style="color: white;" id="rangeValueInquilinos"></span>
       <input type="hidden" id="rangeValueInputInquilinos" name="num_inquilinos">
     </div>
@@ -91,7 +89,7 @@
      <!-- Número de menores de 15 años -->
      <label style="color: white;" for="rangeMenores" class="form-label">Nº menores 15</label>
      <input style="color: wheat;" type="range" class="form-range" min="0" max="5"
-       step="1" id="rangeMenores">
+       step="1" id="rangeMenores" title="Seleccionar número de menores">
      <span style="color: white;" id="rangeValueMenores"></span>
      <input type="hidden" id="rangeValueInputMenores" name="num_menores">
 
@@ -107,12 +105,13 @@
   <div>
     <label for="precio_total">Precio total:</label>
     <div id="precio_total"></div>
+    <input type="hidden" id="precio_total_input" name="precio_total_input" >
   </div>
 </div>
 
 
     <div class="btn_reserve">
-      <button id="btn-reserve" type="submit" class="btn btn-info">
+      <button id="btn-reserve" type="submit" class="btn btn-info" title="Haga clic para completar la reserva">
         <i style="padding: 5px" class="bi bi-journal-bookmark-fill"></i>Reservar
       </button>
     </div>
@@ -125,6 +124,7 @@
     const fechaSalida = document.getElementById('fecha_salida');
     const precioNoche = document.getElementById('precio_noche_persona').dataset.precio;
     const precioTotal = document.getElementById('precio_total');
+    const precioTotalInput = document.getElementById('precio_total_input');
 
     function calcularPrecioTotal() {
       if (fechaEntrada.value && fechaSalida.value && numInquilinos.value && precioNoche) {
@@ -136,9 +136,10 @@
 
         const total = diffDays * numInquilinos.value * parseFloat(precioNoche);
         precioTotal.textContent = total.toFixed(2); // Asumiendo que quieres dos decimales
-
+        precioTotalInput.value = total.toFixed(2); // Actualiza el input oculto para enviar en el formulario
       } else {
-        precioTotal.textContent = ''; // Limpiar si alguna entrada está incompleta
+        precioTotal.textContent = ''; // Limpiar display si alguna entrada está incompleta
+        precioTotalInput.value = ''; // Limpiar input si alguna entrada está incompleta
       }
     }
 

@@ -4,7 +4,7 @@
 
 {% load static %}
 
-{% block title %}Admin Panel{% endblock %}
+{% block title %}{{ restaurante.nombre }}{% endblock %}
 
 {% block extra_links %}
 <link rel="stylesheet" href="{% static 'appCasa/css/bares/restaurantesPanel.css' %}">
@@ -18,11 +18,11 @@
     {% for restaurante in restaurantes %}
         <div class="col">
             <div class="card h-100 shadow">
-                <img src="{% static 'appCasa/images/'|add:restaurante.img_url %}" class="card-img-top" alt="Foto de {{ restaurante.nombre }}">
+                <img src="{% static 'appCasa/images/'|add:restaurante.img_url %}" class="card-img-top" alt="Foto de {{ restaurante.nombre }}" title="Ver imagen de {{ restaurante.nombre }}">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ restaurante.nombre }}</h5>
                     <p class="card-text">{{ restaurante.descripcion }}</p>
-                    <a href="{% url restaurante.url_name %}" class="btn btn-info mt-auto">Ir</a>
+                    <a href="{% url restaurante.url_name %}" class="btn btn-info mt-auto" title="Haz clic para saber más sobre {{ restaurante.nombre }}">Ir</a>
                 </div>
             </div>
         </div>

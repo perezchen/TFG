@@ -5,6 +5,11 @@
         height: auto; /* Ajusta la altura para dispositivos móviles */
     }
 
+    .div-precios {
+        flex-direction: column;
+    }
+
+    
     .range-class-div {
         width: 95%;
         height: 1.5rem;

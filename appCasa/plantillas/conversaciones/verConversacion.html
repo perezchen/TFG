@@ -3,7 +3,7 @@
 
 {% load static %}
 
-{% block title %}Payment{% endblock %}
+{% block title %}Ver Conversacion{% endblock %}
 
 {% block extra_links %}
 
@@ -21,6 +21,6 @@
         </div>
         {% endfor %}
     </div>
-    <a href="{% url 'enviar_mensaje' conversacion_id %}" class="btn btn-primary mt-3">Enviar Mensaje</a>
+    <a href="{% url 'enviar_mensaje' conversacion_id %}" class="btn btn-primary mt-3" title="Enviar el mensaje creado">Enviar Mensaje</a>
 </div>
 {% endblock %}
